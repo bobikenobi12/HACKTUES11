@@ -6,6 +6,7 @@ import { z } from "zod";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 // import { useNavigate, useRouter } from "@tanstack/react-router";
+import { useAuth } from "@/hooks/use-auth";
 import { useMessages } from "@/hooks/useMessages";
 import { Link } from "@tanstack/react-router";
 import { Loader } from "../primitives/loader";
@@ -18,10 +19,12 @@ import {
 	FormMessage,
 } from "../ui/form";
 
-export interface LoginFormProps {}
+export interface LoginFormProps {
+	navigateTo?: string;
+}
 
 const loginFormSchema = z.object({
-	email: z.string().email(i18n.t("auth:errors.email")),
+	username: z.string({ required_error: i18n.t("auth:errors.username") }),
 	password: z
 		.string()
 		.regex(
@@ -32,67 +35,26 @@ const loginFormSchema = z.object({
 	staySignedIn: z.boolean().default(false),
 });
 
-type LoginFormSchema = z.infer<typeof loginFormSchema>;
+export type LoginFormSchema = z.infer<typeof loginFormSchema>;
 
-export const LoginForm: React.FC<LoginFormProps> = () => {
+export const LoginForm: React.FC<LoginFormProps> = ({ navigateTo }) => {
 	const { t } = useMessages("auth");
 
+	const { login } = useAuth(navigateTo || "/");
 	// const navigate = useNavigate({ from: Route.fullPath });
-	// const search = Route.useSearch();
-	// const router = useRouter();
 
 	const form = useForm<LoginFormSchema>({
 		resolver: zodResolver(loginFormSchema),
 		mode: "onSubmit",
 		shouldFocusError: false,
 		defaultValues: {
-			email: "",
+			username: "",
 			password: "",
 		},
 	});
 
-	//   const {
-	//     mutate: login,
-	//     isPending,
-	//     // error,
-	//   } = useMutation({
-	//     mutationFn: async (values: LoginFormSchema) => {
-	//       const { data, error } = await supabase.auth.signInWithPassword({
-	//         email: values.email,
-	//         password: values.password,
-	//       });
-
-	//       if (error) {
-	//         toast({
-	//           title: t("errors.login"),
-	//           description: error.message,
-	//           type: "foreground",
-	//           variant: "destructive",
-	//         });
-	//         return;
-	//       }
-
-	//       // search.redirect
-	//       //   ? router.history.push(search.redirect)
-	//       navigate({ to: "" });
-
-	//       localStorage.setItem("autoRefreshToken", values.staySignedIn.toString());
-
-	//       toast({
-	//         title: t("loginSuccess.title", {
-	//           email: data.user?.email ?? "",
-	//         }),
-	//         description: t("loginSuccess.description"),
-	//         type: "foreground",
-	//       });
-
-	//       return data;
-	//     },
-	//   });
-
 	const onSubmit = (values: LoginFormSchema) => {
-		// login(values);
-		console.log(values);
+		login.mutate(values);
 	};
 
 	return (
@@ -111,14 +73,15 @@ export const LoginForm: React.FC<LoginFormProps> = () => {
 					<div className="my-5 flex flex-col gap-3">
 						<FormField
 							control={form.control}
-							name="email"
+							name="username"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>{t("email.label")}</FormLabel>
+									<FormLabel>{t("username.label")}</FormLabel>
 									<FormControl>
 										<Input
-											type="email"
-											placeholder={t("email.placeholder")}
+											placeholder={t(
+												"username.placeholder"
+											)}
 											{...field}
 										/>
 									</FormControl>
@@ -161,9 +124,12 @@ export const LoginForm: React.FC<LoginFormProps> = () => {
 						{t("signIn")}
 					</Button>
 
-					<div className="my-3 w-full">
+					<div className="max-w-lg my-3`">
 						<Link to="/sign-up">
-							<Button className="w-full underline">
+							<Button
+								variant="link"
+								className=" w-full underline"
+							>
 								{t("signUpPrompt")}
 							</Button>
 						</Link>

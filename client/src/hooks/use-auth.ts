@@ -1,7 +1,13 @@
+import type { LoginFormSchema } from "@/components/auth/login-form";
 import i18n from "@/lib/i18n";
 import { useAuthStore } from "@/stores/auth-store";
+import { useMutation } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
+import { useMemo } from "react";
 import { isValidPhoneNumber } from "react-phone-number-input";
+import { toast } from "sonner";
 import { z } from "zod";
+import { useMessages } from "./useMessages";
 
 export const specialCharsRegex = /^(?=.*\d|\W)/;
 export const lowercaseRegex = /^(?=.*[a-z])/;
@@ -39,53 +45,106 @@ export const passwordFormSchema = z.object({
 export type PasswordFormValues = z.infer<typeof passwordFormSchema>;
 
 export const useAuth = (navigateTo?: string) => {
-	// const navigate = useNavigate();
+	const navigate = useNavigate();
 	// const queryClient = useQueryClient();
-	// const { t } = useMessages("auth");
+	const { t } = useMessages("auth");
 
 	const session = useAuthStore((state) => state.session);
 	const user = useAuthStore((state) => state.userProfile);
-	// const setSession = useAuthStore((state) => state.setSession);
+	const setSession = useAuthStore((state) => state.setSession);
 	// const setProfile = useAuthStore((state) => state.setProfile);
 
 	// Sign Up / Register
-	// const signUp = useMutation({
-	// 	mutationFn: async (values: SignUpFormValues) => {
-	// 		const { data, error } = await supabase.auth.signUp({
-	// 			email: values.email,
-	// 			password: values.password,
-	// 			options: {
-	// 				emailRedirectTo: import.meta.env
-	// 					.VITE_CONFIRM_EMAIL_REDIRECT_URL,
-	// 				// captchaToken: values.hcaptcha,
-	// 				data: {
-	// 					name: values.name,
-	// 					newsletter: values.newsletter,
-	// 					locale: i18n.language,
-	// 				},
-	// 			},
-	// 		});
-	// 		if (error) {
-	// 			toast.error(t("errors.unknown"), {
-	// 				description: error.message,
-	// 			});
-	// 			throw error;
-	// 		}
-	// 		// captcha.current.reset();
+	const signUp = useMutation({
+		mutationFn: async (values: SignUpFormValues) => {
+			const response = await fetch(
+				`${import.meta.env.VITE_API_URL}/auth/signup`,
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						// username: values.username,
+						email: values.email,
+						password: values.password,
+						name: values.name,
+						// phoneNumber: values.phone,
+						// countryCode: values.phoneCountryCode,
+						local: i18n.language,
+					}),
+				}
+			);
 
-	// 		if (navigateTo)
-	// 			navigate({
-	// 				to: navigateTo,
-	// 				// to: "/check-your-email",
-	// 			});
+			const data = await response.json();
 
-	// 		return data;
-	// 	},
-	// });
+			if (!response.ok) {
+				toast.error(t("errors.unknown"), {
+					description: data.message || "Something went wrong",
+				});
+				throw new Error(data.message);
+			}
+
+			if (navigateTo)
+				navigate({
+					to: navigateTo,
+					// to: "/check-your-email",
+				});
+
+			return data;
+		},
+	});
 
 	// // Login
+	const login = useMutation({
+		mutationFn: async (values: LoginFormSchema) => {
+			const response = await fetch(
+				`${import.meta.env.VITE_SERVER_URL}/auth/login`,
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						username: values.username,
+						password: values.password,
+					}),
+				}
+			);
 
-	// // Update Session
+			const data = await response.json();
+
+			if (!response.ok) {
+				toast.error(t("errors.unknown"), {
+					description: data.message || "Something went wrong",
+				});
+				throw new Error(data.message);
+			}
+
+			// Set Session
+			setSession({
+				token: data.token,
+			});
+
+			toast.success(
+				t("loginSuccess.title", {
+					username: values.username,
+				}),
+				{
+					description: t("loginSuccess.description"),
+				}
+			);
+
+			if (navigateTo)
+				navigate({
+					to: navigateTo,
+				});
+
+			return data;
+		},
+	});
+
+	// Update Session
 	// const updateSession = (session: Session) => {
 	// 	setSession(session);
 	// 	setProfile(session);
@@ -196,53 +255,43 @@ export const useAuth = (navigateTo?: string) => {
 	// 	},
 	// });
 
-	// // Auth Links
-	// const authLinks = useMemo(
-	// 	() => [
-	// 		{
-	// 			name: t("profileTabs.dashboard"),
-	// 			url: "/dashboard",
-	// 			customUrl: true,
-	// 			customName: true,
-	// 		},
-	// 		{
-	// 			name: t("profileTabs.profile"),
-	// 			url: "/profile",
-	// 			customUrl: true,
-	// 			customName: true,
-	// 		},
-	// 		{
-	// 			name: t("profileTabs.addresses"),
-	// 			url: "/address",
-	// 			customUrl: true,
-	// 			customName: true,
-	// 		},
-	// 		{
-	// 			name: t("profileTabs.orders"),
-	// 			url: "/orders",
-	// 			customUrl: true,
-	// 			customName: true,
-	// 		},
-	// 		{
-	// 			name: t("profileTabs.manageSubscriptions"),
-	// 			url: "/subscriptions",
-	// 			customUrl: true,
-	// 			customName: true,
-	// 		},
-	// 		{
-	// 			name: t("profileTabs.rewardsProgram"),
-	// 			url: "/rewards",
-	// 			customUrl: true,
-	// 			customName: true,
-	// 		},
-	// 		{
-	// 			name: t("profileTabs.logout"),
-	// 			customName: true,
-	// 			onClick: signOut.mutate,
-	// 		},
-	// 	],
-	// 	[signOut.mutate]
-	// );
+	// Auth Links
+	const authLinks = useMemo(
+		() => [
+			{
+				name: t("profileTabs.dashboard"),
+				url: "/dashboard",
+				customUrl: true,
+				customName: true,
+			},
+			{
+				name: t("profileTabs.profile"),
+				url: "/profile",
+				customUrl: true,
+				customName: true,
+			},
+			{
+				name: t("profileTabs.addresses"),
+				url: "/history",
+				customUrl: true,
+				customName: true,
+			},
+			{
+				name: t("profileTabs.orders"),
+				url: "/analytics",
+				customUrl: true,
+				customName: true,
+			},
+			{
+				name: t("profileTabs.logout"),
+				customName: true,
+				// onClick: signOut.mutate,
+			},
+		],
+		[
+			// signOut.mutate
+		]
+	);
 
 	return {
 		// signUp,
@@ -251,7 +300,8 @@ export const useAuth = (navigateTo?: string) => {
 		// changePassword,
 		// deleteUser,
 		// signOut,
-		// authLinks,
+		login,
+		authLinks,
 		session,
 		user,
 	};

@@ -2,9 +2,6 @@ import { create } from "zustand";
 
 export interface Session {
 	token: string;
-	expires: number;
-	user_id: string;
-	role: string;
 }
 
 export interface UserProfile {
