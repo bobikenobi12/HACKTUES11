@@ -9,7 +9,9 @@ export const Route = createRootRoute({
 		<>
 			<AppLoader />
 			<CookieConsent />
-			<Outlet />
+			<div vaul-drawer-wrapper="" className="bg-background">
+				<Outlet />
+			</div>
 			<Toaster />
 			{/* <AuthSubscriber /> */}
 			{/* <GlobalData /> */}

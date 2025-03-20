@@ -1,4 +1,4 @@
-import type { LoginFormSchema } from "@/components/auth/login-form";
+import type { LoginFormSchema } from "@/components/forms/login-form";
 import i18n from "@/lib/i18n";
 import { useAuthStore } from "@/stores/auth-store";
 import { useMutation } from "@tanstack/react-query";
