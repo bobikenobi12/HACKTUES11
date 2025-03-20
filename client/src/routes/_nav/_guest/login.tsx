@@ -1,34 +1,23 @@
 import { LoginForm } from "@/components/auth/login-form";
-import { Box } from "@/components/primitives/box";
-import { Container } from "@/components/primitives/container";
-import { Section } from "@/components/primitives/section";
-import { useMessages } from "@/hooks/useMessages";
 import { createFileRoute } from "@tanstack/react-router";
+import { GalleryVerticalEnd } from "lucide-react";
 
 const LoginPage = () => {
-	const { t } = useMessages("auth");
-
 	return (
-		<Section>
-			<Container>
-				<div className="flex flex-col items-center justify-center">
-					<h1 className="mx-auto text-balance text-center text-6xl sm:w-1/3">
-						{t("head.login.title")}
-					</h1>
-					<p className="mx-auto mb-14 mt-5 text-balance text-center leading-tight sm:w-1/3">
-						{t("head.login.description")}
-					</p>
-
-					<div className="mx-auto flex w-2/3">
-						<div className="w-full shrink-0 px-5">
-							<Box>
-								<LoginForm />
-							</Box>
-						</div>
+		<div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-muted p-6 md:p-10">
+			<div className="flex w-full max-w-sm flex-col gap-6">
+				<a
+					href="#"
+					className="flex items-center gap-2 self-center font-medium"
+				>
+					<div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
+						<GalleryVerticalEnd className="size-4" />
 					</div>
-				</div>
-			</Container>
-		</Section>
+					HR-buddy
+				</a>
+				<LoginForm />
+			</div>
+		</div>
 	);
 };
 
