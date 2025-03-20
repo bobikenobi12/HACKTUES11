@@ -36,6 +36,7 @@ class RiskCalculationController extends Controller
             'risk_of_employee_turnover' => round($this->calculateRiskOfEmployeeTurnover($data), 2),
             'employee_reputation' => round($this->calculateEmployeeReputation($data), 2),
             'career_growth_potential' => round($this->calculateCareerGrowthPotential($data), 2),
+            'analysis' => $this->analysis,
         ]);
     }
 
