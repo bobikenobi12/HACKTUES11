@@ -37,55 +37,55 @@ class RiskCalculationController extends Controller
     }
 
     private function calculateRiskOfBribery($data)
-    {
-        if($data['criminal_record']){
-            if($data['ethical_integrity'] < 50){
-                if($data['regulatory_violations']){
-                    return 100;//max risk
-                }
-                return 90;//very high risk
-            } else {
-                if($data['online_professional_reputation'] < 40){
-                    return 80;//ok, but not bad reputation
-                }
-                return 70;// still high risk
+{
+    // Start at Root Node: Criminal Record
+    if ($data['criminal_record']) {
+        if ($data['ethical_integrity'] < 50) {
+            if ($data['regulatory_violations']) {
+                return 100; // Max risk: Criminal Record + Low Ethics + Regulatory Violations
             }
-        } else {
-            if($data['regulatory_violations']){
-               if($data['ethical_integrity'] < 60){
-                    return 75;//ok, but not bad reputation
-                } else {
-                    if($data['loyalty'] < 40){
-                        return 65;//goot ethics but low loyalty
-                    }
-                    return 50;// still high risk
+            return 90; // Criminal Record + Low Ethics
+        } else { // Ethical Integrity is 50 or higher
+            if ($data['online_professional_reputation'] < 40) {
+                return 80; // Criminal + Acceptable Ethics but Bad Reputation
+            }
+            return 70; // Criminal + Good Ethics but still High Risk
+        }
+    } else { // No Criminal Record → Go to next major risk factor
+        if ($data['regulatory_violations']) {
+            if ($data['ethical_integrity'] < 60) {
+                return 75; // Regulatory Violations + Low Ethics
+            } else {
+                if ($data['loyalty'] < 40) {
+                    return 65; // Regulatory Violations + Good Ethics but Low Loyalty
                 }
-                
-               } else {
-                if($data['job_tenure'] < 30){
-                    if($data['online_professional_reputation'] < 40){
-                        return 60;//moderate high risk
-                    }
-                    if(!$data['professional_references']){
-                        return 50;//moderate high risk
-                    }
-                    return 40;//low tenure but ok reputation
-                } else {
-                    if($data['loyalty'] < 50){
-                        if($data['ethical_integrity'] < 60){
-                            return 45;//moderate high risk
-                        }
-                        return 35;//okay ethics but low loyalty
-                    } else {
-                        if($data['online_professional_reputation'] < 50){
-                            return 30;//good loyalty but weak reputation 
-                        }
-                        return 15;//low risk
-                    }
+                return 50; // Regulatory Violations but otherwise okay
+            }
+        } else { // No Criminal + No Regulatory Violations → Evaluate Job History
+            if ($data['job_tenure'] < 30) {
+                if ($data['online_professional_reputation'] < 40) {
+                    return 60; // Low Tenure + Bad Reputation
                 }
-               }
+                if ($data['professional_references'] < 40) {
+                    return 55; // Low Tenure + Weak References
+                }
+                return 45; // Low Tenure but Reputation & References Okay
+            } else { // Job Tenure is good → Evaluate Loyalty & Ethics
+                if ($data['loyalty'] < 50) {
+                    if ($data['ethical_integrity'] < 60) {
+                        return 45; // Low Loyalty & Questionable Ethics
+                    }
+                    return 35; // Loyalty Low but Ethics Okay
+                } else { // Loyalty is Good → Evaluate Online Reputation
+                    if ($data['online_professional_reputation'] < 50) {
+                        return 30; // Good Loyalty but Weak Reputation
+                    }
+                    return 15; // Low Risk
+                }
             }
         }
+    }
+}
 
     private function calculateEmployeeEfficiency($data)
     {
