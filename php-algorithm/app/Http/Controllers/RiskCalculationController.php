@@ -216,10 +216,63 @@ class RiskCalculationController extends Controller
     }
 
 
-    private function calculateEmployeeReputation($data)
-    {
-       
+    private function calculateEmployeeReputation($data) {
+        if ($data['ethical_integrity'] < 40) {
+            if ($data['criminal_record']) {
+                if ($data['online_professional_reputation'] < 40) {
+                    $this->analysis = "Very low reputation: Poor ethical integrity, criminal record, and bad online reputation.";
+                    return 10;
+                }
+                $this->analysis = "Very low reputation: Poor ethical integrity combined with a criminal record.";
+                return 15;
+            } else { // No criminal record but low ethical integrity
+                if ($data['professional_references'] < 40) {
+                    $this->analysis = "Low reputation: Poor ethical integrity and weak professional references.";
+                    return 25;
+                }
+                if ($data['online_professional_reputation'] < 50) {
+                    $this->analysis = "Low reputation: Ethical concerns and poor online reputation.";
+                    return 30;
+                }
+                $this->analysis = "Moderate reputation: Poor ethical integrity but positive references and online reputation.";
+                return 35;
+            }
+        } else { // Ethical Integrity is 40 or higher
+            if ($data['criminal_record']) {
+                if ($data['online_professional_reputation'] < 40) {
+                    $this->analysis = "Moderate risk: Good ethical integrity but a criminal record and bad online reputation.";
+                    return 40;
+                }
+                if ($data['professional_references'] > 60) {
+                    $this->analysis = "Moderate reputation: Ethical integrity is strong, but the criminal record raises concerns.";
+                    return 45;
+                }
+                $this->analysis = "Moderate reputation: Ethical integrity is acceptable, but the criminal record affects trustworthiness.";
+                return 50;
+            } else { // No Criminal Record
+                if ($data['online_professional_reputation'] < 50) {
+                    if ($data['linkedin_recommendations'] < 40) {
+                        $this->analysis = "Moderate reputation: No criminal record, but weak online presence and LinkedIn recommendations.";
+                        return 55;
+                    }
+                    $this->analysis = "Good reputation: Ethical integrity is strong, but online reputation could improve.";
+                    return 65;
+                } else { // Strong Online Reputation
+                    if ($data['professional_references'] > 70) {
+                        if ($data['linkedin_recommendations'] > 60) {
+                            $this->analysis = "Excellent reputation: Strong ethical integrity, solid references, and a great online presence.";
+                            return 95;
+                        }
+                        $this->analysis = "Very good reputation: Ethical and professional references are strong.";
+                        return 85;
+                    }
+                    $this->analysis = "Strong reputation: Good ethical integrity and online reputation but needs more professional references.";
+                    return 75;
+                }
+            }
+        }
     }
+    
 
     private function calculateCareerGrowthPotential($data)
     {
