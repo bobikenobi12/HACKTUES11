@@ -186,7 +186,8 @@ export const LoginForm: React.FC<LoginFormProps> = ({
 									</Button>
 								</div>
 								<div className="text-center text-sm">
-									{t("signUpPrompt")}{" "}
+									{t("signUpPrompt")}
+									{` `}
 									<Link
 										to="/sign-up"
 										className="underline underline-offset-4"

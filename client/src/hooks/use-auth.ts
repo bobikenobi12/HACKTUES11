@@ -24,7 +24,6 @@ export const signUpFormSchema = z.object({
 	name: z.string().min(2, i18n.t("auth:errors.obligatory")),
 	email: z.string().email(i18n.t("auth:errors.email")),
 	password: passwordRules,
-	newsletter: z.boolean().default(false),
 	// hcaptcha: z.string().min(1, i18n.t("auth:errors.obligatory")),
 });
 export type SignUpFormValues = z.infer<typeof signUpFormSchema>;
