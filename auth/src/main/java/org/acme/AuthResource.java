@@ -31,7 +31,7 @@ public class AuthResource {
                         .build();
             }
             
-            User user = authService.register(request.getUsername(), request.getEmail(), request.getPassword(), request.getName(), request.getPhoneNumber(), request.getCountryCode(), request.getLocal());
+            User user = authService.register(request.getUsername(), request.getEmail(), request.getPassword(), request.getPhoneNumber(), request.getName(), request.getCountryCode(), request.getLocal());
             
             Map<String, Object> response = new HashMap<>();
             response.put("message", "User registered successfully");
