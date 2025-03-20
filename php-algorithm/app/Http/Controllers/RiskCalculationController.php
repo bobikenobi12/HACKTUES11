@@ -274,9 +274,61 @@ class RiskCalculationController extends Controller
     }
     
 
-    private function calculateCareerGrowthPotential($data)
-    {
-
+    private function calculateCareerGrowthPotential($data) {
+        if ($data['certifications_achieved'] > 70) {
+            if ($data['education_level'] > 70) {
+                if ($data['work_experience_level'] > 70) {
+                    if ($data['career_progression'] > 60) {
+                        $this->analysis = "Very high career growth potential: Strong education, certifications, experience, and career progression.";
+                        return 100;
+                    }
+                    $this->analysis = "High career growth potential: Excellent education, certifications, and work experience, but moderate career progression.";
+                    return 90;
+                }
+                $this->analysis = "High career growth potential: Strong education and certifications, but work experience could improve.";
+                return 85;
+            } else {
+                if ($data['career_progression'] > 60) {
+                    $this->analysis = "Moderate to high career growth potential: Good certifications and career progression, but education level is not strong.";
+                    return 80;
+                }
+                $this->analysis = "Moderate career growth potential: Strong certifications but education and career progression are lower.";
+                return 75;
+            }
+        } else { // Certifications Achieved is 70 or lower
+            if ($data['education_level'] > 50) {
+                if ($data['work_experience_level'] > 50) {
+                    if ($data['career_progression'] > 50) {
+                        $this->analysis = "Moderate career growth potential: Balanced education, experience, and career progression.";
+                        return 70;
+                    }
+                    $this->analysis = "Slightly below moderate career growth potential: Education and experience are good, but career progression is weak.";
+                    return 65;
+                }
+                if ($data['leadership_experience'] > 60) {
+                    $this->analysis = "Moderate potential: Leadership skills present, but lacking in work experience.";
+                    return 60;
+                }
+                $this->analysis = "Below average career growth potential: Good education, but missing experience and leadership.";
+                return 55;
+            } else { // Education Level is 50 or lower
+                if ($data['career_progression'] < 40) {
+                    if ($data['work_experience_level'] < 40) {
+                        $this->analysis = "Low career growth potential: Weak education, work experience, and career progression.";
+                        return 30;
+                    }
+                    $this->analysis = "Low career growth potential: Career progression is weak, but experience helps slightly.";
+                    return 40;
+                }
+                if ($data['leadership_experience'] < 40) {
+                    $this->analysis = "Limited career growth potential: Education and leadership skills are lacking.";
+                    return 35;
+                }
+                $this->analysis = "Very limited career growth potential: Education, experience, and career progression all need improvement.";
+                return 25;
+            }
+        }
     }
+    
        
 }
