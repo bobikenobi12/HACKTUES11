@@ -36,8 +36,7 @@ class RiskCalculationController extends Controller
         ]);
     }
 
-    private function calculateRiskOfBribery($data)
-{
+private function calculateRiskOfBribery($data) {
     $analysis = ""; 
 
     if ($data['criminal_record']) {
@@ -107,9 +106,60 @@ class RiskCalculationController extends Controller
 }
 
 
-private function calculateEmployeeEfficiency($data)
-{
-   
+private function calculateEmployeeEfficiency($data) {
+    $analysis = ""; 
+
+    if ($data['leadership_experience'] > 70) {
+        if ($data['work_experience_level'] > 70) {
+            if ($data['certifications_achieved'] > 50) {
+                if ($data['education_level'] > 60) {
+                    $analysis = "Highly experienced, certified, and well-educated leader.";
+                    return ['score' => 100, 'analysis' => $analysis];
+                }
+                $analysis = "Highly experienced leader with strong certifications.";
+                return ['score' => 90, 'analysis' => $analysis];
+            } else {
+                $analysis = "Strong leader but certifications are lacking.";
+                return ['score' => 80, 'analysis' => $analysis];
+            }
+        } else { // Work Experience Level is not very high
+            if ($data['job_tenure'] > 60) {
+                $analysis = "Long-term employee with strong leadership but lower experience.";
+                return ['score' => 75, 'analysis' => $analysis];
+            }
+            $analysis = "Leadership present but experience and tenure are lacking.";
+            return ['score' => 65, 'analysis' => $analysis];
+        }
+    } else { // Leadership Experience is below 70
+        if ($data['work_experience_level'] > 50) {
+            if ($data['certifications_achieved'] > 50) {
+                if ($data['career_progression'] > 60) {
+                    $analysis = "Moderate experience with growth and certifications.";
+                    return ['score' => 70, 'analysis' => $analysis];
+                }
+                $analysis = "Moderate experience and certifications but low career growth.";
+                return ['score' => 60, 'analysis' => $analysis];
+            } else { // Low Certifications
+                if ($data['education_level'] > 50) {
+                    $analysis = "Educated but lacks leadership and certifications.";
+                    return ['score' => 55, 'analysis' => $analysis];
+                }
+                $analysis = "Neither leadership nor strong credentials.";
+                return ['score' => 45, 'analysis' => $analysis];
+            }
+        } else { // Work Experience Level is low
+            if ($data['job_tenure'] < 40) {
+                $analysis = "Low experience, low tenure → Inefficient employee.";
+                return ['score' => 30, 'analysis' => $analysis];
+            }
+            if ($data['career_progression'] < 40) {
+                $analysis = "No experience, no career growth → Very inefficient.";
+                return ['score' => 25, 'analysis' => $analysis];
+            }
+            $analysis = "Overall weak employee efficiency.";
+            return ['score' => 20, 'analysis' => $analysis];
+        }
+    }
 }
 
 
