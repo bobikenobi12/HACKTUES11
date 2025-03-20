@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 class RiskCalculationController extends Controller
 {
 
-    private $analysis = "";
+    private $analysis = [];
 
     public function calculateMetrics(Request $request)
     {
@@ -44,62 +44,62 @@ class RiskCalculationController extends Controller
         if ($data['criminal_record']) {
             if ($data['ethical_integrity'] < 50) {
                 if ($data['regulatory_violations']) {
-                    $this->analysis = "Maximum risk: Criminal record, low ethical integrity, and regulatory violations.";
+                    $this->analysis['risk_of_bribery'] = "Maximum risk: Criminal record, low ethical integrity, and regulatory violations.";
                     return 100;
                 }
                 if ($data['online_professional_reputation'] < 40) {
-                    $this->analysis = "Criminal record and low ethical integrity combined with a poor online reputation.";
+                    $this->analysis['risk_of_bribery'] = "Criminal record and low ethical integrity combined with a poor online reputation.";
                     return 90;
                 }
-                $this->analysis = "Criminal record and low ethical integrity increase the risk significantly.";
+                $this->analysis['risk_of_bribery'] = "Criminal record and low ethical integrity increase the risk significantly.";
                 return 80;
             } else { // Ethical Integrity is 50 or higher
                 if ($data['online_professional_reputation'] < 40) {
-                    $this->analysis = "Criminal record present, ethical integrity acceptable, but online reputation is weak.";
+                    $this->analysis['risk_of_bribery'] = "Criminal record present, ethical integrity acceptable, but online reputation is weak.";
                     return 75;
                 }
-                $this->analysis = "Criminal record present but mitigated by ethical integrity and online reputation.";
+                $this->analysis['risk_of_bribery'] = "Criminal record present but mitigated by ethical integrity and online reputation.";
                 return 65;
             }
         } else { // No Criminal Record → Go to next major risk factor
             if ($data['regulatory_violations']) {
                 if ($data['ethical_integrity'] < 60) {
-                    $this->analysis = "Regulatory violations combined with low ethical integrity contribute to a high risk.";
+                    $this->analysis['risk_of_bribery'] = "Regulatory violations combined with low ethical integrity contribute to a high risk.";
                     return 70;
                 } else {
                     if ($data['loyalty'] < 40) {
-                        $this->analysis = "Regulatory violations present, ethical integrity is acceptable, but low loyalty raises concerns.";
+                        $this->analysis['risk_of_bribery'] = "Regulatory violations present, ethical integrity is acceptable, but low loyalty raises concerns.";
                         return 60;
                     }
-                    $this->analysis = "Regulatory violations present, but ethical integrity and loyalty are acceptable.";
+                    $this->analysis['risk_of_bribery'] = "Regulatory violations present, but ethical integrity and loyalty are acceptable.";
                     return 50;
                 }
             } else { // No Criminal + No Regulatory Violations → Evaluate Job History
                 if ($data['job_tenure'] < 30) {
                     if ($data['online_professional_reputation'] < 40) {
-                        $this->analysis = "Short job tenure combined with a poor online reputation suggests potential risk.";
+                        $this->analysis['risk_of_bribery'] = "Short job tenure combined with a poor online reputation suggests potential risk.";
                         return 55;
                     }
                     if ($data['professional_references'] < 40) {
-                        $this->analysis = "Short job tenure and weak professional references increase risk.";
+                        $this->analysis['risk_of_bribery'] = "Short job tenure and weak professional references increase risk.";
                         return 50;
                     }
-                    $this->analysis = "Short job tenure, but online reputation and references are acceptable.";
+                    $this->analysis['risk_of_bribery'] = "Short job tenure, but online reputation and references are acceptable.";
                     return 45;
                 } else { // Job Tenure is good → Evaluate Loyalty & Ethics
                     if ($data['loyalty'] < 50) {
                         if ($data['ethical_integrity'] < 60) {
-                            $this->analysis = "Low loyalty and moderate ethical integrity indicate some risk.";
+                            $this->analysis['risk_of_bribery'] = "Low loyalty and moderate ethical integrity indicate some risk.";
                             return 40;
                         }
-                        $this->analysis = "Loyalty is low, but ethical integrity is acceptable.";
+                        $this->analysis['risk_of_bribery'] = "Loyalty is low, but ethical integrity is acceptable.";
                         return 30;
                     } else { // Loyalty is Good → Evaluate Online Reputation
                         if ($data['online_professional_reputation'] < 50) {
-                            $this->analysis = "Good loyalty but weak online reputation slightly increases risk.";
+                            $this->analysis['risk_of_bribery'] = "Good loyalty but weak online reputation slightly increases risk.";
                             return 25;
                         }
-                        $this->analysis = "Strong loyalty, good ethical integrity, and a solid professional reputation result in low risk.";
+                        $this->analysis['risk_of_bribery'] = "Strong loyalty, good ethical integrity, and a solid professional reputation result in low risk.";
                         return 10;
                     }
                 }
@@ -107,229 +107,223 @@ class RiskCalculationController extends Controller
         }
     }
 
-
     private function calculateEmployeeEfficiency($data) {
         if ($data['leadership_experience'] > 70) {
             if ($data['work_experience_level'] > 70) {
                 if ($data['certifications_achieved'] > 50) {
                     if ($data['education_level'] > 60) {
-                        $this->analysis = "Highly experienced, certified, and well-educated leader.";
+                        $this->analysis['employee_efficiency'] = "Highly experienced, certified, and well-educated leader.";
                         return 100;
                     }
-                    $this->analysis = "Highly experienced leader with strong certifications.";
+                    $this->analysis['employee_efficiency'] = "Highly experienced leader with strong certifications.";
                     return 90;
                 } else {
-                    $this->analysis = "Strong leader but certifications are lacking.";
+                    $this->analysis['employee_efficiency'] = "Strong leader but certifications are lacking.";
                     return 80;
                 }
             } else { // Work Experience Level is not very high
                 if ($data['job_tenure'] > 60) {
-                    $this->analysis = "Long-term employee with strong leadership but lower experience.";
+                    $this->analysis['employee_efficiency'] = "Long-term employee with strong leadership but lower experience.";
                     return 75;
                 }
-                $this->analysis = "Leadership present but experience and tenure are lacking.";
+                $this->analysis['employee_efficiency'] = "Leadership present but experience and tenure are lacking.";
                 return 65;
             }
         } else { // Leadership Experience is below 70
             if ($data['work_experience_level'] > 50) {
                 if ($data['certifications_achieved'] > 50) {
                     if ($data['career_progression'] > 60) {
-                        $this->analysis = "Moderate experience with growth and certifications.";
+                        $this->analysis['employee_efficiency'] = "Moderate experience with growth and certifications.";
                         return 70;
                     }
-                    $this->analysis = "Moderate experience and certifications but low career growth.";
+                    $this->analysis['employee_efficiency'] = "Moderate experience and certifications but low career growth.";
                     return 60;
                 } else { // Low Certifications
                     if ($data['education_level'] > 50) {
-                        $this->analysis = "Educated but lacks leadership and certifications.";
+                        $this->analysis['employee_efficiency'] = "Educated but lacks leadership and certifications.";
                         return 55;
                     }
-                    $this->analysis = "Neither leadership nor strong credentials.";
+                    $this->analysis['employee_efficiency'] = "Neither leadership nor strong credentials.";
                     return 45;
                 }
             } else { // Work Experience Level is low
                 if ($data['job_tenure'] < 40) {
-                    $this->analysis = "Low experience, low tenure → Inefficient employee.";
+                    $this->analysis['employee_efficiency'] = "Low experience, low tenure → Inefficient employee.";
                     return 30;
                 }
                 if ($data['career_progression'] < 40) {
-                    $this->analysis = "No experience, no career growth → Very inefficient.";
+                    $this->analysis['employee_efficiency'] = "No experience, no career growth → Very inefficient.";
                     return 25;
                 }
-                $this->analysis = "Overall weak employee efficiency.";
+                $this->analysis['employee_efficiency'] = "Overall weak employee efficiency.";
                 return 20;
             }
         }
     }
-
 
     private function calculateRiskOfEmployeeTurnover($data)
     {
         if ($data['job_tenure'] < 30) {
             if ($data['employment_gaps'] > 50) {
                 if ($data['loyalty'] < 40) {
-                    $this->analysis = "High turnover risk: Short job tenure, frequent employment gaps, and low loyalty.";
+                    $this->analysis['risk_of_employee_turnover'] = "High turnover risk: Short job tenure, frequent employment gaps, and low loyalty.";
                     return 90;
                 }
-                $this->analysis = "Moderate to high turnover risk: Short job tenure and frequent employment gaps.";
+                $this->analysis['risk_of_employee_turnover'] = "Moderate to high turnover risk: Short job tenure and frequent employment gaps.";
                 return 80;
             } else { // Employment Gaps are not high
                 if ($data['career_stability'] < 40) {
-                    $this->analysis = "High turnover risk due to short job tenure and unstable career history.";
+                    $this->analysis['risk_of_employee_turnover'] = "High turnover risk due to short job tenure and unstable career history.";
                     return 75;
                 }
                 if ($data['salary_history'] < 50) {
-                    $this->analysis = "Job tenure is short, but career stability is moderate. Salary inconsistency adds risk.";
+                    $this->analysis['risk_of_employee_turnover'] = "Job tenure is short, but career stability is moderate. Salary inconsistency adds risk.";
                     return 70;
                 }
-                $this->analysis = "Short job tenure is a concern, but career stability and salary history are reasonable.";
+                $this->analysis['risk_of_employee_turnover'] = "Short job tenure is a concern, but career stability and salary history are reasonable.";
                 return 65;
             }
         } else { // Job tenure is 30 or more
             if ($data['loyalty'] < 40) {
                 if ($data['career_stability'] < 50) {
-                    $this->analysis = "Moderate turnover risk: Long job tenure, but low loyalty and unstable career history.";
+                    $this->analysis['risk_of_employee_turnover'] = "Moderate turnover risk: Long job tenure, but low loyalty and unstable career history.";
                     return 60;
                 }
                 if ($data['employment_gaps'] > 50) {
-                    $this->analysis = "Moderate turnover risk: Long tenure, but frequent employment gaps.";
+                    $this->analysis['risk_of_employee_turnover'] = "Moderate turnover risk: Long tenure, but frequent employment gaps.";
                     return 55;
                 }
-                $this->analysis = "Low to moderate risk: Employee has long tenure but exhibits low loyalty.";
+                $this->analysis['risk_of_employee_turnover'] = "Low to moderate risk: Employee has long tenure but exhibits low loyalty.";
                 return 50;
             } else { // Loyalty is 40 or higher
                 if ($data['career_stability'] < 50) {
-                    $this->analysis = "Low turnover risk: Good loyalty, but career history suggests some instability.";
+                    $this->analysis['risk_of_employee_turnover'] = "Low turnover risk: Good loyalty, but career history suggests some instability.";
                     return 40;
                 }
                 if ($data['employment_gaps'] > 50) {
-                    $this->analysis = "Low turnover risk: Good loyalty and stable career, but some employment gaps.";
+                    $this->analysis['risk_of_employee_turnover'] = "Low turnover risk: Good loyalty and stable career, but some employment gaps.";
                     return 35;
                 }
                 if ($data['salary_history'] > 60) {
-                    $this->analysis = "Very low turnover risk: Employee has long tenure, strong loyalty, and good salary history.";
+                    $this->analysis['risk_of_employee_turnover'] = "Very low turnover risk: Employee has long tenure, strong loyalty, and good salary history.";
                     return 20;
                 }
-                $this->analysis = "Very low turnover risk: Employee has long tenure and exhibits high loyalty.";
+                $this->analysis['risk_of_employee_turnover'] = "Very low turnover risk: Employee has long tenure and exhibits high loyalty.";
                 return 15;
             }
         }
     }
-
 
     private function calculateEmployeeReputation($data) {
         if ($data['ethical_integrity'] < 40) {
             if ($data['criminal_record']) {
                 if ($data['online_professional_reputation'] < 40) {
-                    $this->analysis = "Very low reputation: Poor ethical integrity, criminal record, and bad online reputation.";
+                    $this->analysis['employee_reputation'] = "Very low reputation: Poor ethical integrity, criminal record, and bad online reputation.";
                     return 10;
                 }
-                $this->analysis = "Very low reputation: Poor ethical integrity combined with a criminal record.";
+                $this->analysis['employee_reputation'] = "Very low reputation: Poor ethical integrity combined with a criminal record.";
                 return 15;
             } else { // No criminal record but low ethical integrity
                 if ($data['professional_references'] < 40) {
-                    $this->analysis = "Low reputation: Poor ethical integrity and weak professional references.";
+                    $this->analysis['employee_reputation'] = "Low reputation: Poor ethical integrity and weak professional references.";
                     return 25;
                 }
                 if ($data['online_professional_reputation'] < 50) {
-                    $this->analysis = "Low reputation: Ethical concerns and poor online reputation.";
+                    $this->analysis['employee_reputation'] = "Low reputation: Ethical concerns and poor online reputation.";
                     return 30;
                 }
-                $this->analysis = "Moderate reputation: Poor ethical integrity but positive references and online reputation.";
+                $this->analysis['employee_reputation'] = "Moderate reputation: Poor ethical integrity but positive references and online reputation.";
                 return 35;
             }
         } else { // Ethical Integrity is 40 or higher
             if ($data['criminal_record']) {
                 if ($data['online_professional_reputation'] < 40) {
-                    $this->analysis = "Moderate risk: Good ethical integrity but a criminal record and bad online reputation.";
+                    $this->analysis['employee_reputation'] = "Moderate risk: Good ethical integrity but a criminal record and bad online reputation.";
                     return 40;
                 }
                 if ($data['professional_references'] > 60) {
-                    $this->analysis = "Moderate reputation: Ethical integrity is strong, but the criminal record raises concerns.";
+                    $this->analysis['employee_reputation'] = "Moderate reputation: Ethical integrity is strong, but the criminal record raises concerns.";
                     return 45;
                 }
-                $this->analysis = "Moderate reputation: Ethical integrity is acceptable, but the criminal record affects trustworthiness.";
+                $this->analysis['employee_reputation'] = "Moderate reputation: Ethical integrity is acceptable, but the criminal record affects trustworthiness.";
                 return 50;
             } else { // No Criminal Record
                 if ($data['online_professional_reputation'] < 50) {
                     if ($data['linkedin_recommendations'] < 40) {
-                        $this->analysis = "Moderate reputation: No criminal record, but weak online presence and LinkedIn recommendations.";
+                        $this->analysis['employee_reputation'] = "Moderate reputation: No criminal record, but weak online presence and LinkedIn recommendations.";
                         return 55;
                     }
-                    $this->analysis = "Good reputation: Ethical integrity is strong, but online reputation could improve.";
+                    $this->analysis['employee_reputation'] = "Good reputation: Ethical integrity is strong, but online reputation could improve.";
                     return 65;
                 } else { // Strong Online Reputation
                     if ($data['professional_references'] > 70) {
                         if ($data['linkedin_recommendations'] > 60) {
-                            $this->analysis = "Excellent reputation: Strong ethical integrity, solid references, and a great online presence.";
+                            $this->analysis['employee_reputation'] = "Excellent reputation: Strong ethical integrity, solid references, and a great online presence.";
                             return 95;
                         }
-                        $this->analysis = "Very good reputation: Ethical and professional references are strong.";
+                        $this->analysis['employee_reputation'] = "Very good reputation: Ethical and professional references are strong.";
                         return 85;
                     }
-                    $this->analysis = "Strong reputation: Good ethical integrity and online reputation but needs more professional references.";
+                    $this->analysis['employee_reputation'] = "Strong reputation: Good ethical integrity and online reputation but needs more professional references.";
                     return 75;
                 }
             }
         }
     }
-    
 
     private function calculateCareerGrowthPotential($data) {
         if ($data['certifications_achieved'] > 70) {
             if ($data['education_level'] > 70) {
                 if ($data['work_experience_level'] > 70) {
                     if ($data['career_progression'] > 60) {
-                        $this->analysis = "Very high career growth potential: Strong education, certifications, experience, and career progression.";
+                        $this->analysis['career_growth_potential'] = "Very high career growth potential: Strong education, certifications, experience, and career progression.";
                         return 100;
                     }
-                    $this->analysis = "High career growth potential: Excellent education, certifications, and work experience, but moderate career progression.";
+                    $this->analysis['career_growth_potential'] = "High career growth potential: Excellent education, certifications, and work experience, but moderate career progression.";
                     return 90;
                 }
-                $this->analysis = "High career growth potential: Strong education and certifications, but work experience could improve.";
+                $this->analysis['career_growth_potential'] = "High career growth potential: Strong education and certifications, but work experience could improve.";
                 return 85;
             } else {
                 if ($data['career_progression'] > 60) {
-                    $this->analysis = "Moderate to high career growth potential: Good certifications and career progression, but education level is not strong.";
+                    $this->analysis['career_growth_potential'] = "Moderate to high career growth potential: Good certifications and career progression, but education level is not strong.";
                     return 80;
                 }
-                $this->analysis = "Moderate career growth potential: Strong certifications but education and career progression are lower.";
+                $this->analysis['career_growth_potential'] = "Moderate career growth potential: Strong certifications but education and career progression are lower.";
                 return 75;
             }
         } else { // Certifications Achieved is 70 or lower
             if ($data['education_level'] > 50) {
                 if ($data['work_experience_level'] > 50) {
                     if ($data['career_progression'] > 50) {
-                        $this->analysis = "Moderate career growth potential: Balanced education, experience, and career progression.";
+                        $this->analysis['career_growth_potential'] = "Moderate career growth potential: Balanced education, experience, and career progression.";
                         return 70;
                     }
-                    $this->analysis = "Slightly below moderate career growth potential: Education and experience are good, but career progression is weak.";
+                    $this->analysis['career_growth_potential'] = "Slightly below moderate career growth potential: Education and experience are good, but career progression is weak.";
                     return 65;
                 }
                 if ($data['leadership_experience'] > 60) {
-                    $this->analysis = "Moderate potential: Leadership skills present, but lacking in work experience.";
+                    $this->analysis['career_growth_potential'] = "Moderate potential: Leadership skills present, but lacking in work experience.";
                     return 60;
                 }
-                $this->analysis = "Below average career growth potential: Good education, but missing experience and leadership.";
+                $this->analysis['career_growth_potential'] = "Below average career growth potential: Good education, but missing experience and leadership.";
                 return 55;
             } else { // Education Level is 50 or lower
                 if ($data['career_progression'] < 40) {
                     if ($data['work_experience_level'] < 40) {
-                        $this->analysis = "Low career growth potential: Weak education, work experience, and career progression.";
+                        $this->analysis['career_growth_potential'] = "Low career growth potential: Weak education, work experience, and career progression.";
                         return 30;
                     }
-                    $this->analysis = "Low career growth potential: Career progression is weak, but experience helps slightly.";
+                    $this->analysis['career_growth_potential'] = "Low career growth potential: Career progression is weak, but experience helps slightly.";
                     return 40;
                 }
                 if ($data['leadership_experience'] < 40) {
-                    $this->analysis = "Limited career growth potential: Education and leadership skills are lacking.";
+                    $this->analysis['career_growth_potential'] = "Limited career growth potential: Education and leadership skills are lacking.";
                     return 35;
                 }
-                $this->analysis = "Very limited career growth potential: Education, experience, and career progression all need improvement.";
+                $this->analysis['career_growth_potential'] = "Very limited career growth potential: Education, experience, and career progression all need improvement.";
                 return 25;
             }
         }
     }
-    
-       
 }
