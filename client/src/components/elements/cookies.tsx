@@ -67,10 +67,10 @@ export const Cookies: React.FC<CookiesProps> = () => {
 
 	return (
 		<div
-			className="fixed bottom-4 left-4 z-40 w-fit max-w-[90%] rounded-md border-2 border-peach-darkest bg-peach-light p-5 sm:max-w-[50%] md:bottom-10 md:left-10 xl:p-10"
+			className="fixed bottom-4 left-4 z-40 w-fit max-w-[90%] rounded-md border-2 border-border bg-primary p-5 sm:max-w-[50%] md:bottom-10 md:left-10 xl:p-10"
 			ref={cookiesRef}
 		>
-			<h4 className="text-xl">{t("cookies.title")}</h4>
+			<h4 className="text-xl text-accent">{t("cookies.title")}</h4>
 
 			<p className="mb-5 mt-2">{t("cookies.description")}</p>
 

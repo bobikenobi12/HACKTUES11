@@ -11,14 +11,53 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as NavImport } from './routes/_nav'
 import { Route as IndexImport } from './routes/index'
+import { Route as NavGuestImport } from './routes/_nav/_guest'
+import { Route as NavAuthImport } from './routes/_nav/_auth'
+import { Route as NavGuestSignupImport } from './routes/_nav/_guest/signup'
+import { Route as NavGuestLoginImport } from './routes/_nav/_guest/login'
+import { Route as NavAuthDashboardImport } from './routes/_nav/_auth/dashboard'
 
 // Create/Update Routes
+
+const NavRoute = NavImport.update({
+  id: '/_nav',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRoute,
+} as any)
+
+const NavGuestRoute = NavGuestImport.update({
+  id: '/_guest',
+  getParentRoute: () => NavRoute,
+} as any)
+
+const NavAuthRoute = NavAuthImport.update({
+  id: '/_auth',
+  getParentRoute: () => NavRoute,
+} as any)
+
+const NavGuestSignupRoute = NavGuestSignupImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => NavGuestRoute,
+} as any)
+
+const NavGuestLoginRoute = NavGuestLoginImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => NavGuestRoute,
+} as any)
+
+const NavAuthDashboardRoute = NavAuthDashboardImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => NavAuthRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
@@ -32,39 +71,142 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
+    '/_nav': {
+      id: '/_nav'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof NavImport
+      parentRoute: typeof rootRoute
+    }
+    '/_nav/_auth': {
+      id: '/_nav/_auth'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof NavAuthImport
+      parentRoute: typeof NavImport
+    }
+    '/_nav/_guest': {
+      id: '/_nav/_guest'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof NavGuestImport
+      parentRoute: typeof NavImport
+    }
+    '/_nav/_auth/dashboard': {
+      id: '/_nav/_auth/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof NavAuthDashboardImport
+      parentRoute: typeof NavAuthImport
+    }
+    '/_nav/_guest/login': {
+      id: '/_nav/_guest/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof NavGuestLoginImport
+      parentRoute: typeof NavGuestImport
+    }
+    '/_nav/_guest/signup': {
+      id: '/_nav/_guest/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof NavGuestSignupImport
+      parentRoute: typeof NavGuestImport
+    }
   }
 }
 
 // Create and export the route tree
 
+interface NavAuthRouteChildren {
+  NavAuthDashboardRoute: typeof NavAuthDashboardRoute
+}
+
+const NavAuthRouteChildren: NavAuthRouteChildren = {
+  NavAuthDashboardRoute: NavAuthDashboardRoute,
+}
+
+const NavAuthRouteWithChildren =
+  NavAuthRoute._addFileChildren(NavAuthRouteChildren)
+
+interface NavGuestRouteChildren {
+  NavGuestLoginRoute: typeof NavGuestLoginRoute
+  NavGuestSignupRoute: typeof NavGuestSignupRoute
+}
+
+const NavGuestRouteChildren: NavGuestRouteChildren = {
+  NavGuestLoginRoute: NavGuestLoginRoute,
+  NavGuestSignupRoute: NavGuestSignupRoute,
+}
+
+const NavGuestRouteWithChildren = NavGuestRoute._addFileChildren(
+  NavGuestRouteChildren,
+)
+
+interface NavRouteChildren {
+  NavAuthRoute: typeof NavAuthRouteWithChildren
+  NavGuestRoute: typeof NavGuestRouteWithChildren
+}
+
+const NavRouteChildren: NavRouteChildren = {
+  NavAuthRoute: NavAuthRouteWithChildren,
+  NavGuestRoute: NavGuestRouteWithChildren,
+}
+
+const NavRouteWithChildren = NavRoute._addFileChildren(NavRouteChildren)
+
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '': typeof NavGuestRouteWithChildren
+  '/dashboard': typeof NavAuthDashboardRoute
+  '/login': typeof NavGuestLoginRoute
+  '/signup': typeof NavGuestSignupRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '': typeof NavGuestRouteWithChildren
+  '/dashboard': typeof NavAuthDashboardRoute
+  '/login': typeof NavGuestLoginRoute
+  '/signup': typeof NavGuestSignupRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/_nav': typeof NavRouteWithChildren
+  '/_nav/_auth': typeof NavAuthRouteWithChildren
+  '/_nav/_guest': typeof NavGuestRouteWithChildren
+  '/_nav/_auth/dashboard': typeof NavAuthDashboardRoute
+  '/_nav/_guest/login': typeof NavGuestLoginRoute
+  '/_nav/_guest/signup': typeof NavGuestSignupRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '' | '/dashboard' | '/login' | '/signup'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '' | '/dashboard' | '/login' | '/signup'
+  id:
+    | '__root__'
+    | '/'
+    | '/_nav'
+    | '/_nav/_auth'
+    | '/_nav/_guest'
+    | '/_nav/_auth/dashboard'
+    | '/_nav/_guest/login'
+    | '/_nav/_guest/signup'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  NavRoute: typeof NavRouteWithChildren
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  NavRoute: NavRouteWithChildren,
 }
 
 export const routeTree = rootRoute
@@ -77,11 +219,46 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/"
+        "/",
+        "/_nav"
       ]
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/_nav": {
+      "filePath": "_nav.tsx",
+      "children": [
+        "/_nav/_auth",
+        "/_nav/_guest"
+      ]
+    },
+    "/_nav/_auth": {
+      "filePath": "_nav/_auth.tsx",
+      "parent": "/_nav",
+      "children": [
+        "/_nav/_auth/dashboard"
+      ]
+    },
+    "/_nav/_guest": {
+      "filePath": "_nav/_guest.tsx",
+      "parent": "/_nav",
+      "children": [
+        "/_nav/_guest/login",
+        "/_nav/_guest/signup"
+      ]
+    },
+    "/_nav/_auth/dashboard": {
+      "filePath": "_nav/_auth/dashboard.tsx",
+      "parent": "/_nav/_auth"
+    },
+    "/_nav/_guest/login": {
+      "filePath": "_nav/_guest/login.tsx",
+      "parent": "/_nav/_guest"
+    },
+    "/_nav/_guest/signup": {
+      "filePath": "_nav/_guest/signup.tsx",
+      "parent": "/_nav/_guest"
     }
   }
 }
