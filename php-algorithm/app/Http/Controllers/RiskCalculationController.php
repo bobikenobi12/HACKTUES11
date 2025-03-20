@@ -38,43 +38,73 @@ class RiskCalculationController extends Controller
 
     private function calculateRiskOfBribery($data)
     {
-        $score = ($data['loyalty'] * $data['ethical_integrity']) / 150
-               + ($data['job_tenure'] * $data['professional_references']) / 200
-               + ($data['online_professional_reputation'] / 3)
-               - ($data['criminal_record'] * 50 + $data['regulatory_violations'] * 75);
-        return max(min($score, 100), 0);
-    }
+        if($data['criminal_record']){
+            if($data['ethical_integrity'] < 50){
+                if($data['regulatory_violations']){
+                    return 100;//max risk
+                }
+                return 90;//very high risk
+            } else {
+                if($data['online_professional_reputation'] < 40){
+                    return 80;//ok, but not bad reputation
+                }
+                return 70;// still high risk
+            }
+        } else {
+            if($data['regulatory_violations']){
+               if($data['ethical_integrity'] < 60){
+                    return 75;//ok, but not bad reputation
+                } else {
+                    if($data['loyalty'] < 40){
+                        return 65;//goot ethics but low loyalty
+                    }
+                    return 50;// still high risk
+                }
+                
+               } else {
+                if($data['job_tenure'] < 30){
+                    if($data['online_professional_reputation'] < 40){
+                        return 60;//moderate high risk
+                    }
+                    if(!$data['professional_references']){
+                        return 50;//moderate high risk
+                    }
+                    return 40;//low tenure but ok reputation
+                } else {
+                    if($data['loyalty'] < 50){
+                        if($data['ethical_integrity'] < 60){
+                            return 45;//moderate high risk
+                        }
+                        return 35;//okay ethics but low loyalty
+                    } else {
+                        if($data['online_professional_reputation'] < 50){
+                            return 30;//good loyalty but weak reputation 
+                        }
+                        return 15;//low risk
+                    }
+                }
+               }
+            }
+        }
 
     private function calculateEmployeeEfficiency($data)
     {
-        $score = ($data['work_experience_level'] * $data['certifications_achieved']) / 150
-               + ($data['education_level'] * $data['job_tenure']) / 200
-               + ($data['career_progression'] * 0.8)
-               + ($data['leadership_experience'] * 25);
-        return log($score + 1) * (100 / log(500 + 1));
+      
     }
 
     private function calculateRiskOfEmployeeTurnover($data)
     {
-        $score = ($data['job_tenure'] * $data['loyalty']) / 200
-               + ($data['career_stability'] * $data['salary_history']) / 200
-               - ($data['employment_gaps'] * 30);
-        return 100 - max(min($score, 100), 0);
+       
     }
 
     private function calculateEmployeeReputation($data)
     {
-        $score = ($data['ethical_integrity'] * $data['professional_references']) / 150
-               + ($data['online_professional_reputation'] * $data['linkedin_recommendations']) / 200
-               - ($data['criminal_record'] * 30);
-        return max(min($score, 100), 0);
+       
     }
 
     private function calculateCareerGrowthPotential($data)
     {
-        $initialScore = ($data['certifications_achieved'] * $data['education_level']) / 100
-                      + ($data['work_experience_level'] * $data['career_progression']) / 100
-                      + ($data['leadership_experience'] * 10);
-        return log($initialScore + 1) * (100 / log(600 + 1));
+
     }
+       
 }
