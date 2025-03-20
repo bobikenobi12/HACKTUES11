@@ -23,13 +23,18 @@ import {
 	useSidebar,
 } from "@/components/ui/sidebar";
 import { useMessages } from "@/hooks/useMessages";
+import { useAuthStore } from "@/stores/auth-store";
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { Skeleton } from "../ui/skeleton";
 
 export function NavUser() {
 	const { isMobile } = useSidebar();
 	const { t } = useMessages("nav");
+
+	const setSession = useAuthStore((state) => state.setSession);
+	const navigate = useNavigate();
 
 	const { isLoading, isError, data, error } = useQuery({
 		queryKey: ["profile"],
@@ -53,7 +58,7 @@ export function NavUser() {
 			}
 
 			const data = await response.json();
-			console.log(data);
+
 			return data as Promise<{
 				name: string;
 				email: string;
@@ -155,7 +160,15 @@ export function NavUser() {
 							</DropdownMenuItem>
 						</DropdownMenuGroup>
 						<DropdownMenuSeparator />
-						<DropdownMenuItem>
+						<DropdownMenuItem
+							onClick={() => {
+								setSession(null);
+								navigate({
+									to: "/login",
+								});
+								toast.success("You have been logged out");
+							}}
+						>
 							<LogOutIcon />
 							{t("logout")}
 						</DropdownMenuItem>
