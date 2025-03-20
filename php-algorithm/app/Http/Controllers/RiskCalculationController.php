@@ -163,10 +163,62 @@ private function calculateEmployeeEfficiency($data) {
 }
 
 
-    private function calculateRiskOfEmployeeTurnover($data)
-    {
-       
+private function calculateRiskOfEmployeeTurnover($data)
+{
+    $analysis = ""; // Initialize analysis message
+
+    // Root Node: Job Tenure
+    if ($data['job_tenure'] < 30) {
+        if ($data['employment_gaps'] > 50) {
+            if ($data['loyalty'] < 40) {
+                $analysis = "High turnover risk: Short job tenure, frequent employment gaps, and low loyalty.";
+                return ['score' => 90, 'analysis' => $analysis];
+            }
+            $analysis = "Moderate to high turnover risk: Short job tenure and frequent employment gaps.";
+            return ['score' => 80, 'analysis' => $analysis];
+        } else { // Employment Gaps are not high
+            if ($data['career_stability'] < 40) {
+                $analysis = "High turnover risk due to short job tenure and unstable career history.";
+                return ['score' => 75, 'analysis' => $analysis];
+            }
+            if ($data['salary_history'] < 50) {
+                $analysis = "Job tenure is short, but career stability is moderate. Salary inconsistency adds risk.";
+                return ['score' => 70, 'analysis' => $analysis];
+            }
+            $analysis = "Short job tenure is a concern, but career stability and salary history are reasonable.";
+            return ['score' => 65, 'analysis' => $analysis];
+        }
+    } else { // Job tenure is 30 or more
+        if ($data['loyalty'] < 40) {
+            if ($data['career_stability'] < 50) {
+                $analysis = "Moderate turnover risk: Long job tenure, but low loyalty and unstable career history.";
+                return ['score' => 60, 'analysis' => $analysis];
+            }
+            if ($data['employment_gaps'] > 50) {
+                $analysis = "Moderate turnover risk: Long tenure, but frequent employment gaps.";
+                return ['score' => 55, 'analysis' => $analysis];
+            }
+            $analysis = "Low to moderate risk: Employee has long tenure but exhibits low loyalty.";
+            return ['score' => 50, 'analysis' => $analysis];
+        } else { // Loyalty is 40 or higher
+            if ($data['career_stability'] < 50) {
+                $analysis = "Low turnover risk: Good loyalty, but career history suggests some instability.";
+                return ['score' => 40, 'analysis' => $analysis];
+            }
+            if ($data['employment_gaps'] > 50) {
+                $analysis = "Low turnover risk: Good loyalty and stable career, but some employment gaps.";
+                return ['score' => 35, 'analysis' => $analysis];
+            }
+            if ($data['salary_history'] > 60) {
+                $analysis = "Very low turnover risk: Employee has long tenure, strong loyalty, and good salary history.";
+                return ['score' => 20, 'analysis' => $analysis];
+            }
+            $analysis = "Very low turnover risk: Employee has long tenure and exhibits high loyalty.";
+            return ['score' => 15, 'analysis' => $analysis];
+        }
     }
+}
+
 
     private function calculateEmployeeReputation($data)
     {
