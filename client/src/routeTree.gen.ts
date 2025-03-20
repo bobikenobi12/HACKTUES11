@@ -15,7 +15,7 @@ import { Route as NavImport } from './routes/_nav'
 import { Route as IndexImport } from './routes/index'
 import { Route as NavGuestImport } from './routes/_nav/_guest'
 import { Route as NavAuthImport } from './routes/_nav/_auth'
-import { Route as NavGuestSignupImport } from './routes/_nav/_guest/signup'
+import { Route as NavGuestSignUpImport } from './routes/_nav/_guest/sign-up'
 import { Route as NavGuestLoginImport } from './routes/_nav/_guest/login'
 import { Route as NavAuthDashboardImport } from './routes/_nav/_auth/dashboard'
 
@@ -42,9 +42,9 @@ const NavAuthRoute = NavAuthImport.update({
   getParentRoute: () => NavRoute,
 } as any)
 
-const NavGuestSignupRoute = NavGuestSignupImport.update({
-  id: '/signup',
-  path: '/signup',
+const NavGuestSignUpRoute = NavGuestSignUpImport.update({
+  id: '/sign-up',
+  path: '/sign-up',
   getParentRoute: () => NavGuestRoute,
 } as any)
 
@@ -106,11 +106,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NavGuestLoginImport
       parentRoute: typeof NavGuestImport
     }
-    '/_nav/_guest/signup': {
-      id: '/_nav/_guest/signup'
-      path: '/signup'
-      fullPath: '/signup'
-      preLoaderRoute: typeof NavGuestSignupImport
+    '/_nav/_guest/sign-up': {
+      id: '/_nav/_guest/sign-up'
+      path: '/sign-up'
+      fullPath: '/sign-up'
+      preLoaderRoute: typeof NavGuestSignUpImport
       parentRoute: typeof NavGuestImport
     }
   }
@@ -131,12 +131,12 @@ const NavAuthRouteWithChildren =
 
 interface NavGuestRouteChildren {
   NavGuestLoginRoute: typeof NavGuestLoginRoute
-  NavGuestSignupRoute: typeof NavGuestSignupRoute
+  NavGuestSignUpRoute: typeof NavGuestSignUpRoute
 }
 
 const NavGuestRouteChildren: NavGuestRouteChildren = {
   NavGuestLoginRoute: NavGuestLoginRoute,
-  NavGuestSignupRoute: NavGuestSignupRoute,
+  NavGuestSignUpRoute: NavGuestSignUpRoute,
 }
 
 const NavGuestRouteWithChildren = NavGuestRoute._addFileChildren(
@@ -160,7 +160,7 @@ export interface FileRoutesByFullPath {
   '': typeof NavGuestRouteWithChildren
   '/dashboard': typeof NavAuthDashboardRoute
   '/login': typeof NavGuestLoginRoute
-  '/signup': typeof NavGuestSignupRoute
+  '/sign-up': typeof NavGuestSignUpRoute
 }
 
 export interface FileRoutesByTo {
@@ -168,7 +168,7 @@ export interface FileRoutesByTo {
   '': typeof NavGuestRouteWithChildren
   '/dashboard': typeof NavAuthDashboardRoute
   '/login': typeof NavGuestLoginRoute
-  '/signup': typeof NavGuestSignupRoute
+  '/sign-up': typeof NavGuestSignUpRoute
 }
 
 export interface FileRoutesById {
@@ -179,14 +179,14 @@ export interface FileRoutesById {
   '/_nav/_guest': typeof NavGuestRouteWithChildren
   '/_nav/_auth/dashboard': typeof NavAuthDashboardRoute
   '/_nav/_guest/login': typeof NavGuestLoginRoute
-  '/_nav/_guest/signup': typeof NavGuestSignupRoute
+  '/_nav/_guest/sign-up': typeof NavGuestSignUpRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '' | '/dashboard' | '/login' | '/signup'
+  fullPaths: '/' | '' | '/dashboard' | '/login' | '/sign-up'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '' | '/dashboard' | '/login' | '/signup'
+  to: '/' | '' | '/dashboard' | '/login' | '/sign-up'
   id:
     | '__root__'
     | '/'
@@ -195,7 +195,7 @@ export interface FileRouteTypes {
     | '/_nav/_guest'
     | '/_nav/_auth/dashboard'
     | '/_nav/_guest/login'
-    | '/_nav/_guest/signup'
+    | '/_nav/_guest/sign-up'
   fileRoutesById: FileRoutesById
 }
 
@@ -245,7 +245,7 @@ export const routeTree = rootRoute
       "parent": "/_nav",
       "children": [
         "/_nav/_guest/login",
-        "/_nav/_guest/signup"
+        "/_nav/_guest/sign-up"
       ]
     },
     "/_nav/_auth/dashboard": {
@@ -256,8 +256,8 @@ export const routeTree = rootRoute
       "filePath": "_nav/_guest/login.tsx",
       "parent": "/_nav/_guest"
     },
-    "/_nav/_guest/signup": {
-      "filePath": "_nav/_guest/signup.tsx",
+    "/_nav/_guest/sign-up": {
+      "filePath": "_nav/_guest/sign-up.tsx",
       "parent": "/_nav/_guest"
     }
   }

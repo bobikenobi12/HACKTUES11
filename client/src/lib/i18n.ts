@@ -4,17 +4,20 @@ import { initReactI18next } from "react-i18next";
 import { capitalize } from "./index";
 
 // BG translations
+import bgAuth from "@/locales/bg/auth.json";
 import bgMisc from "@/locales/bg/misc.json";
-
 // EN translations
+import enAuth from "@/locales/en/auth.json";
 import enMisc from "@/locales/en/misc.json";
 
 export const resources = {
 	en: {
 		misc: enMisc,
+		auth: enAuth,
 	},
 	bg: {
 		misc: bgMisc,
+		auth: bgAuth,
 	},
 } as const;
 

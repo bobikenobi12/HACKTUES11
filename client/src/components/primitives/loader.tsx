@@ -24,7 +24,7 @@ export const Loader: ReactFCWithChildren<LoaderProps> = ({
 						"inset-0 z-40 flex items-center justify-center rounded-sm",
 						preloader
 							? "h-full min-h-40 w-full"
-							: "absolute bg-black-base/30",
+							: "absolute bg-primary",
 						className
 					)}
 				>

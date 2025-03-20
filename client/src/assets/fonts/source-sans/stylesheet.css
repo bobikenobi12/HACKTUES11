@@ -1,0 +1,55 @@
+@font-face {
+  font-family: "Source Sans";
+  font-style: normal;
+  font-weight: normal;
+  src: url("SourceSans-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Source Sans";
+  font-style: italic;
+  font-weight: normal;
+  src: url("SourceSans-Italic.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Source Sans";
+  font-style: normal;
+  font-weight: bold;
+  src: url("SourceSans-Bold.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Source Sans";
+  font-style: italic;
+  font-weight: bold;
+  src: url("SourceSans-BoldItalic.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Source Sans";
+  font-style: normal;
+  font-weight: 500;
+  src: url("SourceSans-Medium.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Source Sans";
+  font-style: italic;
+  font-weight: 500;
+  src: url("SourceSans-MediumItalic.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Source Sans";
+  font-style: normal;
+  font-weight: 600;
+  src: url("SourceSans-SemiBold.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Source Sans";
+  font-style: italic;
+  font-weight: 600;
+  src: url("SourceSans-SemiBoldItalic.ttf") format("truetype");
+}
