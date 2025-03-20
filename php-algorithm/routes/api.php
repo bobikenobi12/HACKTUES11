@@ -10,5 +10,4 @@ Route::get('/user', function (Request $request) {
 
 use App\Http\Controllers\RiskCalculationController;
 
-Route::post('calculate-risk', [RiskCalculationController::class, 'calculateRisk']);
-Route::get('test', [RiskCalculationController::class, 'testApi']);
+Route::post('calculate-metrics', [RiskCalculationController::class, 'calculateMetrics']);
