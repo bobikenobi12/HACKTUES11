@@ -37,6 +37,10 @@ public class ProtectedResource {
         profile.put("email", claims.get("email", String.class));
         profile.put("role", claims.get("role", String.class));
         profile.put("message", "This is your protected profile data");
+        profile.put("name", claims.get("name", String.class));
+        profile.put("phoneNumber", claims.get("phoneNumber", String.class));
+        profile.put("countryCode", claims.get("countryCode", String.class));
+        profile.put("local", claims.get("local", String.class));
         
         return Response.ok(profile).build();
     }
