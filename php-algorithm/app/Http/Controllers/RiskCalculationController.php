@@ -38,59 +38,80 @@ class RiskCalculationController extends Controller
 
     private function calculateRiskOfBribery($data)
 {
-    // Start at Root Node: Criminal Record
+    $analysis = ""; 
+
     if ($data['criminal_record']) {
         if ($data['ethical_integrity'] < 50) {
             if ($data['regulatory_violations']) {
-                return 100; // Max risk: Criminal Record + Low Ethics + Regulatory Violations
+                $analysis = "Maximum risk: Criminal record, low ethical integrity, and regulatory violations.";
+                return ['score' => 100, 'analysis' => $analysis];
             }
-            return 90; // Criminal Record + Low Ethics
+            if ($data['online_professional_reputation'] < 40) {
+                $analysis = "Criminal record and low ethical integrity combined with a poor online reputation.";
+                return ['score' => 90, 'analysis' => $analysis];
+            }
+            $analysis = "Criminal record and low ethical integrity increase the risk significantly.";
+            return ['score' => 80, 'analysis' => $analysis];
         } else { // Ethical Integrity is 50 or higher
             if ($data['online_professional_reputation'] < 40) {
-                return 80; // Criminal + Acceptable Ethics but Bad Reputation
+                $analysis = "Criminal record present, ethical integrity acceptable, but online reputation is weak.";
+                return ['score' => 75, 'analysis' => $analysis];
             }
-            return 70; // Criminal + Good Ethics but still High Risk
+            $analysis = "Criminal record present but mitigated by ethical integrity and online reputation.";
+            return ['score' => 65, 'analysis' => $analysis];
         }
     } else { // No Criminal Record → Go to next major risk factor
         if ($data['regulatory_violations']) {
             if ($data['ethical_integrity'] < 60) {
-                return 75; // Regulatory Violations + Low Ethics
+                $analysis = "Regulatory violations combined with low ethical integrity contribute to a high risk.";
+                return ['score' => 70, 'analysis' => $analysis];
             } else {
                 if ($data['loyalty'] < 40) {
-                    return 65; // Regulatory Violations + Good Ethics but Low Loyalty
+                    $analysis = "Regulatory violations present, ethical integrity is acceptable, but low loyalty raises concerns.";
+                    return ['score' => 60, 'analysis' => $analysis];
                 }
-                return 50; // Regulatory Violations but otherwise okay
+                $analysis = "Regulatory violations present, but ethical integrity and loyalty are acceptable.";
+                return ['score' => 50, 'analysis' => $analysis];
             }
         } else { // No Criminal + No Regulatory Violations → Evaluate Job History
             if ($data['job_tenure'] < 30) {
                 if ($data['online_professional_reputation'] < 40) {
-                    return 60; // Low Tenure + Bad Reputation
+                    $analysis = "Short job tenure combined with a poor online reputation suggests potential risk.";
+                    return ['score' => 55, 'analysis' => $analysis];
                 }
                 if ($data['professional_references'] < 40) {
-                    return 55; // Low Tenure + Weak References
+                    $analysis = "Short job tenure and weak professional references increase risk.";
+                    return ['score' => 50, 'analysis' => $analysis];
                 }
-                return 45; // Low Tenure but Reputation & References Okay
+                $analysis = "Short job tenure, but online reputation and references are acceptable.";
+                return ['score' => 45, 'analysis' => $analysis];
             } else { // Job Tenure is good → Evaluate Loyalty & Ethics
                 if ($data['loyalty'] < 50) {
                     if ($data['ethical_integrity'] < 60) {
-                        return 45; // Low Loyalty & Questionable Ethics
+                        $analysis = "Low loyalty and moderate ethical integrity indicate some risk.";
+                        return ['score' => 40, 'analysis' => $analysis];
                     }
-                    return 35; // Loyalty Low but Ethics Okay
+                    $analysis = "Loyalty is low, but ethical integrity is acceptable.";
+                    return ['score' => 30, 'analysis' => $analysis];
                 } else { // Loyalty is Good → Evaluate Online Reputation
                     if ($data['online_professional_reputation'] < 50) {
-                        return 30; // Good Loyalty but Weak Reputation
+                        $analysis = "Good loyalty but weak online reputation slightly increases risk.";
+                        return ['score' => 25, 'analysis' => $analysis];
                     }
-                    return 15; // Low Risk
+                    $analysis = "Strong loyalty, good ethical integrity, and a solid professional reputation result in low risk.";
+                    return ['score' => 10, 'analysis' => $analysis];
                 }
             }
         }
     }
 }
 
-    private function calculateEmployeeEfficiency($data)
-    {
-      
-    }
+
+private function calculateEmployeeEfficiency($data)
+{
+   
+}
+
 
     private function calculateRiskOfEmployeeTurnover($data)
     {
