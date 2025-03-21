@@ -35,5 +35,10 @@
 		"uknownCompany": "Не може да премахнете служител от несъществуваща фирма!",
 		"success": "Успешно премахнате {{employeeName}} от {{companyName}}!",
 		"error": "Грешка при премахване на {{employeeName}} от {{companyName}}."
+	},
+	"settings": {
+		"title": "Настройки",
+		"description": "Настройки сайта по Ваше желание",
+		"close": "Затвори"
 	}
 }
