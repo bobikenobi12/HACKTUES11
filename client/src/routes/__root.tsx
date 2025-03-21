@@ -1,3 +1,4 @@
+import { ProfileDialog } from "@/components/dialogs/profile-dialog";
 import { AppLoader } from "@/components/layout/app-loader";
 import CookieConsent from "@/components/ui/cookies";
 import { Toaster } from "@/components/ui/sonner";
@@ -12,6 +13,8 @@ export const Route = createRootRoute({
 			<div vaul-drawer-wrapper="" className="bg-background">
 				<Outlet />
 			</div>
+
+			<ProfileDialog />
 			<Toaster />
 			{/* <AuthSubscriber /> */}
 			{/* <GlobalData /> */}

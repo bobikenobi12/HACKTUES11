@@ -2,5 +2,11 @@
 	"navAction": "Analyze CV",
 	"logout": "Logout",
 	"profile": "Profile",
-	"close": "Close"
+	"close": "Close",
+	"companies": {
+		"emptyCombobox": "No companies available.",
+		"select": "Select company",
+		"search": "Search company",
+		"create": "Create new company '{{companyName}}'"
+	}
 }

@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/sidebar";
 import { useMessages } from "@/hooks/useMessages";
 import { useAuthStore } from "@/stores/auth-store";
+import { useDialogStore } from "@/stores/dialog-store";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
@@ -32,6 +33,9 @@ import { Skeleton } from "../ui/skeleton";
 export function NavUser() {
 	const { isMobile } = useSidebar();
 	const { t } = useMessages("nav");
+
+	// profile dialog states
+	const setProfileDialog = useDialogStore((state) => state.setProfileDialog);
 
 	const setSession = useAuthStore((state) => state.setSession);
 	const navigate = useNavigate();
@@ -146,7 +150,9 @@ export function NavUser() {
 						</DropdownMenuLabel>
 						<DropdownMenuSeparator />
 						<DropdownMenuGroup>
-							<DropdownMenuItem>
+							<DropdownMenuItem
+								onClick={() => setProfileDialog(true)}
+							>
 								<UserCircleIcon />
 								{t("profile")}
 							</DropdownMenuItem>

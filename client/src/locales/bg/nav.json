@@ -2,5 +2,11 @@
 	"navAction": "Анализарай CV",
 	"logout": "Изход",
 	"profile": "Профил",
-	"close": "Затвори"
+	"close": "Затвори",
+	"companies": {
+		"emptyCombobox": "Няма налични фирми",
+		"select": "Избери фирма",
+		"search": "Потърси фирма",
+		"create": "Създай нова фирма '{{companyName}}'"
+	}
 }
