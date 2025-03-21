@@ -43,7 +43,7 @@ public class ExternalResource {
     }
 
     @POST
-    @Path("/upload-profile")
+    @Path("/analyze")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response uploadEmployeeProfile(AnalyzerRequest employeeProfile) {

@@ -10,7 +10,7 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import org.jboss.resteasy.reactive.RestForm;
 import org.jboss.resteasy.reactive.multipart.FileUpload;
 
-@Path("/api")
+@Path("/api1")
 @RegisterRestClient(configKey = "ivan-scraper")
 public interface ScraperExternalService {
     @POST

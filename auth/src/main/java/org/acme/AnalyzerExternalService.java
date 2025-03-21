@@ -10,8 +10,8 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 @Path("/api")
 @RegisterRestClient(configKey = "analyzer")
 public interface AnalyzerExternalService {
-    //APIs
     @POST
+    @Path("/calculate-metrics")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     String uploadEmployeeProfile(AnalyzerRequest employeeProfile);
