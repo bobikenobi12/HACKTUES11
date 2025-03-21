@@ -6,12 +6,20 @@ import { Progress } from "../ui/progress";
 import { useMessages } from "@/hooks/useMessages";
 import i18n from "@/lib/i18n";
 import type { EmployeeAnalysis } from "@/routes/_nav/_auth/analytics";
+import {
+	useCompanyStore,
+	type AddEmployee,
+	type Employee,
+} from "@/stores/company-store";
+import { useDialogStore } from "@/stores/dialog-store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { bg, enGB as enGbm } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
+import { toast } from "sonner";
 import { z } from "zod";
+import { Spinner } from "../primitives/spinner";
 import { Button } from "../ui/button";
 import { Calendar } from "../ui/calendar";
 import { FileUploader } from "../ui/file-uploader";
@@ -62,6 +70,15 @@ export const NewEmployeeForm: React.FC<NewEmployeeFormProps> = ({
 
 	const { t } = useMessages("auth");
 
+	const setGatherAnalyticsDialog = useDialogStore(
+		(state) => state.setGatherAnalyticsDialog
+	);
+
+	const addEmployeeToCompany = useCompanyStore(
+		(state) => state.addEmployeeToCompany
+	);
+	const selectedCompany = useCompanyStore((state) => state.selectedCompany);
+
 	const form = useForm<NewEmployeeSchema>({
 		resolver: zodResolver(newEmployeeSchema),
 		mode: "onSubmit",
@@ -73,8 +90,37 @@ export const NewEmployeeForm: React.FC<NewEmployeeFormProps> = ({
 		},
 	});
 
-	const controller = new AbortController();
-	const timeoutId = setTimeout(() => controller.abort(), 600000); // 10 minutes
+	const fetchWithTimeout = async <T,>(
+		url: string,
+		options: RequestInit = {},
+		timeout = 600000 // 10 minutes in milliseconds
+	): Promise<T> => {
+		const controller = new AbortController();
+		const timeoutId = setTimeout(() => {
+			console.log("Request timed out");
+			controller.abort();
+		}, timeout);
+
+		try {
+			const response = await fetch(url, {
+				...options,
+				signal: controller.signal,
+			});
+
+			if (!response.ok) {
+				throw new Error(`HTTP error! Status: ${response.status}`);
+			}
+
+			return (await response.json()) as T;
+		} catch (error) {
+			if ((error as Error).name === "AbortError") {
+				throw new Error("Request timed out");
+			}
+			throw error;
+		} finally {
+			clearTimeout(timeoutId);
+		}
+	};
 
 	const gatherAnalytics = useMutation({
 		mutationFn: async (values: NewEmployeeSchema) => {
@@ -83,7 +129,7 @@ export const NewEmployeeForm: React.FC<NewEmployeeFormProps> = ({
 			formData.append("full_name", values.employeeName);
 			formData.append("cv", values.employeeCV[0]);
 
-			const response = await fetch(
+			const response = await fetchWithTimeout<EmployeeAnalysis>(
 				`${import.meta.env.VITE_SERVER_URL}/external/upload-user-data`,
 				{
 					method: "POST",
@@ -94,18 +140,45 @@ export const NewEmployeeForm: React.FC<NewEmployeeFormProps> = ({
 							).token
 						}`,
 					},
-					signal: controller.signal,
 					body: formData,
 				}
 			);
 
-			if (!response.ok) {
-				throw new Error("Network response was not ok");
+			return response;
+		},
+	});
+
+	const addEmployee = useMutation({
+		mutationFn: async (employee: AddEmployee) => {
+			if (!selectedCompany) {
+				throw new Error("No company selected");
+			}
+			const res = await fetch(
+				`${import.meta.env.VITE_SERVER_URL}/company/${selectedCompany.id}/employee`,
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: `Bearer ${
+							JSON.parse(
+								localStorage.getItem("client-session") || "{}"
+							).token
+						}`,
+					},
+					body: JSON.stringify(employee),
+				}
+			);
+			if (!res.ok) {
+				throw new Error("Failed to add employee");
 			}
 
-			const data: EmployeeAnalysis = await response.json();
+			const data: Employee = await res.json();
 
-			clearTimeout(timeoutId);
+			addEmployeeToCompany(data);
+
+			toast.success(t("employee.confirmation.success"));
+
+			setGatherAnalyticsDialog(false);
 
 			return data;
 		},
@@ -318,26 +391,79 @@ export const NewEmployeeForm: React.FC<NewEmployeeFormProps> = ({
 										{t("employee.confirmation.message")}
 									</p>
 									<div className="mt-4">
-										<svg
-											className="animate-spin h-8 w-8 text-blue-500 mx-auto"
-											xmlns="http://www.w3.org/2000/svg"
-											fill="none"
-											viewBox="0 0 24 24"
-										>
-											<circle
-												className="opacity-25"
-												cx="12"
-												cy="12"
-												r="10"
-												stroke="currentColor"
-												strokeWidth="4"
-											></circle>
-											<path
-												className="opacity-75"
-												fill="currentColor"
-												d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-											></path>
-										</svg>
+										{gatherAnalytics.isPending ? (
+											<svg
+												className="animate-spin h-8 w-8 text-blue-500 mx-auto"
+												xmlns="http://www.w3.org/2000/svg"
+												fill="none"
+												viewBox="0 0 24 24"
+											>
+												<circle
+													className="opacity-25"
+													cx="12"
+													cy="12"
+													r="10"
+													stroke="currentColor"
+													strokeWidth="4"
+												></circle>
+												<path
+													className="opacity-75"
+													fill="currentColor"
+													d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+												></path>
+											</svg>
+										) : gatherAnalytics.isError ? (
+											<h1 className="text-red-500">
+												{t(
+													"employee.confirmation.error"
+												)}
+											</h1>
+										) : gatherAnalytics.isSuccess ? (
+											<Button
+												type="button"
+												onClick={() => {
+													addEmployee.mutate({
+														name: form.getValues(
+															"employeeName"
+														),
+														birth_date: form
+															.getValues(
+																"employeeBirthday"
+															)
+															.toString(),
+														career_growth_potential:
+															gatherAnalytics.data
+																.metrics
+																.career_growth_potential,
+														employee_efficiency:
+															gatherAnalytics.data
+																.metrics
+																.employee_efficiency,
+														employee_reputation:
+															gatherAnalytics.data
+																.metrics
+																.employee_reputation,
+														risk_of_bribery:
+															gatherAnalytics.data
+																.metrics
+																.risk_of_bribery,
+														risk_of_employee_turnover:
+															gatherAnalytics.data
+																.metrics
+																.risk_of_employee_turnover,
+													});
+												}}
+												className="w-full"
+												disabled={addEmployee.isPending}
+											>
+												{addEmployee.isPending && (
+													<Spinner />
+												)}
+												{t(
+													"employee.confirmation.confirmAction"
+												)}
+											</Button>
+										) : null}
 									</div>
 									<p className="mt-4 text-gray-600">
 										{t("employee.confirmation.waitMessage")}

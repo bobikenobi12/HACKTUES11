@@ -1,5 +1,6 @@
 {
 	"navAction": "Анализарай CV",
+	"navActionTooltip": "Първо трябва да изберете фирма!",
 	"logout": "Изход",
 	"profile": "Профил",
 	"close": "Затвори",

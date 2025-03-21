@@ -8,9 +8,16 @@ import {
 	SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { useMessages } from "@/hooks/useMessages";
+import { useCompanyStore } from "@/stores/company-store";
 import { useDialogStore } from "@/stores/dialog-store";
 import { Link as RouterLink } from "@tanstack/react-router";
 import { LanguagePicker } from "../elements/language-picker";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "../ui/tooltip";
 
 export function NavMain({
 	items,
@@ -23,6 +30,8 @@ export function NavMain({
 }) {
 	const { t } = useMessages("nav");
 
+	const selectedCompany = useCompanyStore((state) => state.selectedCompany);
+
 	const setGatherAnalyticsDialog = useDialogStore(
 		(state) => state.setGatherAnalyticsDialog
 	);
@@ -32,14 +41,46 @@ export function NavMain({
 			<SidebarGroupContent className="flex flex-col gap-2">
 				<SidebarMenu>
 					<SidebarMenuItem className="flex items-center gap-2">
-						<SidebarMenuButton
-							tooltip={t("navAction")}
-							className="min-w-8 bg-primary text-primary-foreground duration-200 ease-linear hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground"
-							onClick={() => setGatherAnalyticsDialog(true)}
-						>
-							<PlusCircleIcon />
-							<span>{t("navAction")}</span>
-						</SidebarMenuButton>
+						{!selectedCompany ? (
+							<TooltipProvider>
+								<Tooltip>
+									<TooltipTrigger>
+										<SidebarMenuButton
+											tooltip={t("navAction")}
+											className="min-w-8 bg-primary text-primary-foreground duration-200 ease-linear hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground"
+											onClick={() => {
+												if (selectedCompany) {
+													setGatherAnalyticsDialog(
+														true
+													);
+												}
+											}}
+											disabled={!selectedCompany}
+										>
+											<PlusCircleIcon />
+											<span>{t("navAction")}</span>
+										</SidebarMenuButton>
+									</TooltipTrigger>
+									<TooltipContent>
+										<p>{t("navActionTooltip")}</p>
+									</TooltipContent>
+								</Tooltip>
+							</TooltipProvider>
+						) : (
+							<SidebarMenuButton
+								tooltip={t("navAction")}
+								className="min-w-8 bg-primary text-primary-foreground duration-200 ease-linear hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground"
+								onClick={() => {
+									if (selectedCompany) {
+										setGatherAnalyticsDialog(true);
+									}
+								}}
+								disabled={!selectedCompany}
+							>
+								<PlusCircleIcon />
+								<span>{t("navAction")}</span>
+							</SidebarMenuButton>
+						)}
 
 						<div className="flex items-center gap-2 shrink-0 group-data-[collapsible=icon]:opacity-0">
 							<LanguagePicker />

@@ -1,5 +1,6 @@
 {
 	"navAction": "Analyze CV",
+	"navActionTooltip": "You need to select a company first!",
 	"logout": "Logout",
 	"profile": "Profile",
 	"close": "Close",
