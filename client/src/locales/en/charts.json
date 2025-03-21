@@ -1,0 +1,11 @@
+{
+	"metrics": {
+		"risk_of_bribery": "Risk of Bribery",
+		"employee_efficiency": "Employee Efficiency",
+		"risk_of_employee_turnover": "Risk of Employee Turnover",
+		"employee_reputation": "Employee Reputation",
+		"career_growth_potential": "Career Growth Potential",
+		"calculatedMetrics": "Calculated Metrics",
+		"adjustedMetrics": "Adjusted Metrics"
+	}
+}

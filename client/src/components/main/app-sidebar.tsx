@@ -32,6 +32,7 @@ import {
 	SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { useMessages } from "@/hooks/useMessages";
+import i18n from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { useCompanyStore, type Company } from "@/stores/company-store";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -45,16 +46,17 @@ import {
 	CommandList,
 } from "../ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { NavSecondary } from "./nav-secondary";
 
 const data = {
 	navMain: [
 		{
-			title: "Employees",
+			title: i18n.t("nav:header.links.employees"),
 			url: "/employees",
 			icon: UsersIcon,
 		},
 		{
-			title: "Dashboard",
+			title: i18n.t("nav:header.links.dashboard"),
 			url: "/dashboard",
 			icon: LayoutDashboardIcon,
 		},
@@ -64,8 +66,8 @@ const data = {
 			icon: ListIcon,
 		},
 		{
-			title: "Analytics",
-			url: "#",
+			title: i18n.t("nav:header.links.analytics"),
+			url: "/analytics",
 			icon: BarChartIcon,
 		},
 		{
@@ -129,17 +131,17 @@ const data = {
 	],
 	navSecondary: [
 		{
-			title: "Settings",
+			title: i18n.t("nav:header.links.settings"),
 			url: "#",
 			icon: SettingsIcon,
 		},
 		{
-			title: "Get Help",
+			title: i18n.t("nav:header.links.getHelp"),
 			url: "#",
 			icon: HelpCircleIcon,
 		},
 		{
-			title: "Search",
+			title: i18n.t("nav:header.links.search"),
 			url: "#",
 			icon: SearchIcon,
 		},
@@ -365,7 +367,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			<SidebarContent>
 				<NavMain items={data.navMain} />
 				{/* <NavDocuments items={data.documents} /> */}
-				{/* <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
+				<NavSecondary items={data.navSecondary} className="mt-auto" />
 			</SidebarContent>
 			<SidebarFooter>
 				<NavUser />

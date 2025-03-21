@@ -13,7 +13,9 @@
 			"employees": "Employees",
 			"companies": "Companies",
 			"settings": "Settings",
-			"analytics": "Analytics"
+			"analytics": "Analytics",
+			"getHelp": "Get Help",
+			"search": "Search"
 		}
 	},
 	"companies": {

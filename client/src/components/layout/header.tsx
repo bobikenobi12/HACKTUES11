@@ -31,7 +31,7 @@ export const Header: React.FC = memo(() =>
 		const xl = useMediaQuery("min-width: 1280px");
 
 		// Auth
-		const { user, authLinks } = useAuth();
+		const { user } = useAuth();
 
 		// Bckg
 		// const [isDark, setIsDark] = useState(dark);

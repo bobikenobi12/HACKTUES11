@@ -5,11 +5,13 @@ import { capitalize } from "./index";
 
 // BG translations
 import bgAuth from "@/locales/bg/auth.json";
+import bgCharts from "@/locales/bg/charts.json";
 import bgMisc from "@/locales/bg/misc.json";
 import bgNav from "@/locales/bg/nav.json";
 
 // EN translations
 import enAuth from "@/locales/en/auth.json";
+import enCharts from "@/locales/en/charts.json";
 import enMisc from "@/locales/en/misc.json";
 import enNav from "@/locales/en/nav.json";
 
@@ -18,11 +20,13 @@ export const resources = {
 		nav: enNav,
 		misc: enMisc,
 		auth: enAuth,
+		charts: enCharts,
 	},
 	bg: {
 		nav: bgNav,
 		misc: bgMisc,
 		auth: bgAuth,
+		charts: bgCharts,
 	},
 } as const;
 

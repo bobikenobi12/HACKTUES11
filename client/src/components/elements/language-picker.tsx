@@ -1,5 +1,7 @@
 import { useMessages } from "@/hooks/useMessages";
+import { ChevronDown } from "lucide-react";
 import React, { useEffect, useMemo, useState } from "react";
+import { Button } from "../ui/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -24,24 +26,25 @@ export const LanguagePicker: React.FC<LanguagePickerProps> = () => {
 			(
 				locales.find((l) => l.iso === language) ||
 				locales.find((l) => l.code === language)
-			)?.code.toUpperCase(),
+			)?.code.toUpperCase() || "en",
 		[language, locales]
 	);
 
 	useEffect(() => {
 		// Set the lang attribute on the <html> element
 		document.documentElement.lang = language;
-		console.log("Language changed to", language);
-		console.log("Display language", displayLanguage);
 	}, [language]);
-
 	return (
 		<div className="block">
 			<DropdownMenu
 				open={dropdownOpened}
 				onOpenChange={setDropdownOpened}
 			>
-				<DropdownMenuTrigger>{displayLanguage}</DropdownMenuTrigger>
+				<DropdownMenuTrigger asChild>
+					<Button variant="outline">
+						{displayLanguage} <ChevronDown />
+					</Button>
+				</DropdownMenuTrigger>
 				<DropdownMenuContent>
 					{locales.map((l) => (
 						<DropdownMenuItem

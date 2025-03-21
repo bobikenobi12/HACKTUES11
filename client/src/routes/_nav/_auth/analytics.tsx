@@ -9,6 +9,7 @@ import {
 	YAxis,
 } from "recharts";
 
+import { SectionCards } from "@/components/main/section-cards";
 import {
 	Card,
 	CardContent,
@@ -23,13 +24,14 @@ import {
 	ChartTooltip,
 	ChartTooltipContent,
 } from "@/components/ui/chart";
-import { useQuery } from "@tanstack/react-query";
+import { useMessages } from "@/hooks/useMessages";
+import i18n from "@/lib/i18n";
 
 export const Route = createFileRoute("/_nav/_auth/analytics")({
 	component: AnalyticsPage,
 });
 
-interface EmployeeAnalysis {
+export interface EmployeeAnalysis {
 	calculated_metrics: {
 		risk_of_bribery: number;
 		employee_efficiency: number;
@@ -55,11 +57,11 @@ interface EmployeeAnalysis {
 
 const chartConfig = {
 	calculated: {
-		label: "Calculated Metrics",
+		label: i18n.t("charts:metrics.calculatedMetrics"),
 		color: "hsl(var(--chart-1))",
 	},
 	adjusted: {
-		label: "Adjusted metrics",
+		label: i18n.t("charts:metrics.adjustedMetrics"),
 		color: "hsl(var(--chart-2))",
 	},
 	label: {
@@ -67,60 +69,94 @@ const chartConfig = {
 	},
 } satisfies ChartConfig;
 
+export const data: EmployeeAnalysis = {
+	calculated_metrics: {
+		risk_of_bribery: 0.2,
+		employee_efficiency: 0.8,
+		risk_of_employee_turnover: 0.4,
+		employee_reputation: 0.6,
+		career_growth_potential: 0.9,
+	},
+	adjusted_metrics: {
+		risk_of_bribery: 0.3,
+		employee_efficiency: 0.7,
+		risk_of_employee_turnover: 0.5,
+		employee_reputation: 0.7,
+		career_growth_potential: 0.8,
+	},
+	analysis: {
+		risk_of_bribery:
+			"Strong loyalty, good ethical integrity, and a solid professional reputation result in low risk.",
+		employee_efficiency: "Overall weak employee efficiency.",
+		risk_of_employee_turnover:
+			"Very low turnover risk: Employee has long tenure and exhibits high loyalty.",
+		employee_reputation:
+			"Strong reputation: Good ethical integrity and online reputation but needs more professional references.",
+		career_growth_potential:
+			"Very limited career growth potential: Education, experience, and career progression all need improvement.",
+	},
+};
+
 function AnalyticsPage() {
-	const { data, isLoading, isError } = useQuery({
-		queryKey: ["analytics"],
-		queryFn: async () => {
-			const response = await fetch(
-				`${import.meta.env.VITE_SERVER_URL}/external/analyze`,
-				{
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-						Authorization: `Bearer ${
-							JSON.parse(
-								localStorage.getItem("client-session") || "{}"
-							).token
-						}`,
-					},
-				}
-			);
-			if (!response.ok) {
-				throw new Error("Network response was not ok");
-			}
+	const { t } = useMessages("charts");
+	// const { data, isLoading, isError } = useQuery({
+	// 	queryKey: ["analytics"],
+	// 	queryFn: async () => {
+	// 		const response = await fetch(
+	// 			`${import.meta.env.VITE_SERVER_URL}/external/analyze`,
+	// 			{
+	// 				method: "POST",
+	// 				headers: {
+	// 					"Content-Type": "application/json",
+	// 					Authorization: `Bearer ${
+	// 						JSON.parse(
+	// 							localStorage.getItem("client-session") || "{}"
+	// 						).token
+	// 					}`,
+	// 				},
+	// 			}
+	// 		);
+	// 		if (!response.ok) {
+	// 			throw new Error("Network response was not ok");
+	// 		}
 
-			const data: EmployeeAnalysis = await response.json();
+	// 		const data: EmployeeAnalysis = await response.json();
 
-			return data;
-		},
-	});
+	// 		return data;
+	// 	},
+	// });
 
-	if (isLoading) {
-		return <div>Loading...</div>;
-	}
+	// if (isLoading) {
+	// 	return <div>Loading...</div>;
+	// }
 
-	if (isError) {
-		return <div>Error...</div>;
-	}
+	// if (isError) {
+	// 	return <div>Error...</div>;
+	// }
 	return (
-		<section className="flex flex-col gap-3 md:flex-row md:gap-0">
+		<section className="flex flex-col gap-3 ">
+			<div className="flex flex-col gap-3">
+				{/* <CircularProgress metric={t("metrics.riskOfBribery")} c */}
+
+				<SectionCards {...data} />
+			</div>
 			<AnalysisBarChart
 				chartData={[
 					{
-						metric: "Risk of bribery",
+						metric: t("metrics.risk_of_bribery"),
 						calculated:
 							data?.calculated_metrics.risk_of_bribery || 0,
 						adjusted: data?.adjusted_metrics.risk_of_bribery || 0,
 					},
 					{
-						metric: "Employee efficiency",
+						metric: t("metrics.employee_efficiency"),
 						calculated:
 							data?.calculated_metrics.employee_efficiency || 0,
 						adjusted:
 							data?.adjusted_metrics.employee_efficiency || 0,
 					},
 					{
-						metric: "Risk of employee turnover",
+						metric: t("metrics.risk_of_employee_turnover"),
 						calculated:
 							data?.calculated_metrics
 								.risk_of_employee_turnover || 0,
@@ -129,14 +165,14 @@ function AnalyticsPage() {
 							0,
 					},
 					{
-						metric: "Employee reputation",
+						metric: t("metrics.employee_reputation"),
 						calculated:
 							data?.calculated_metrics.employee_reputation || 0,
 						adjusted:
 							data?.adjusted_metrics.employee_reputation || 0,
 					},
 					{
-						metric: "Career growth potential",
+						metric: t("metrics.career_growth_potential"),
 						calculated:
 							data?.calculated_metrics.career_growth_potential ||
 							0,

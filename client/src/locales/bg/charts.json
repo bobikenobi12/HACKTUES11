@@ -1,0 +1,12 @@
+{
+	"metrics": {
+		"risk_of_bribery": "Риск да бъде подкупен",
+		"employee_efficiency": "Ефективност като служител",
+		"risk_of_employee_turnover": "Риск от обръщаемост на служителите",
+		"employee_reputation": "Репутация като служител",
+		"career_growth_potential": "Потенциал за кариерно развитие",
+		"calculatedMetrics": "Изчислени метрики",
+		"adjustedMetrics": "Коригирани метрики",
+		"metric": "Метрика"
+	}
+}

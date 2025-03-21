@@ -41,17 +41,9 @@ export function NavMain({
 							<span>{t("navAction")}</span>
 						</SidebarMenuButton>
 
-						<div className="flex items-center gap-2">
+						<div className="flex items-center gap-2 shrink-0 group-data-[collapsible=icon]:opacity-0">
 							<LanguagePicker />
 						</div>
-						{/* <Button
-							size="icon"
-							className="h-9 w-9 shrink-0 group-data-[collapsible=icon]:opacity-0"
-							variant="outline"
-						>
-							<MailIcon />
-							<span className="sr-only">See All</span>
-						</Button> */}
 					</SidebarMenuItem>
 				</SidebarMenu>
 				<SidebarMenu>

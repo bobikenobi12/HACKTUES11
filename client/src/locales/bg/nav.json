@@ -13,7 +13,9 @@
 			"employees": "Служители",
 			"companies": "Компании",
 			"settings": "Настройки",
-			"analytics": "Анализи"
+			"analytics": "Анализи",
+			"getHelp": "Потърси помощ",
+			"search": "Търсене"
 		}
 	},
 	"companies": {
