@@ -7,6 +7,15 @@
 		"dialogTitle": "Нов Потенциален Служители",
 		"dialogContent": "Добавяне на нови потенциални служители в системата"
 	},
+	"header": {
+		"links": {
+			"dashboard": "Табло",
+			"employees": "Служители",
+			"companies": "Компании",
+			"settings": "Настройки",
+			"analytics": "Анализи"
+		}
+	},
 	"companies": {
 		"emptyCombobox": "Няма налични фирми",
 		"select": "Избери фирма",

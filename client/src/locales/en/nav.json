@@ -7,6 +7,15 @@
 		"dialogTitle": "New Potential Employees",
 		"dialogContent": "Add a new potential employee to the system."
 	},
+	"header": {
+		"links": {
+			"dashboard": "Dashboard",
+			"employees": "Employees",
+			"companies": "Companies",
+			"settings": "Settings",
+			"analytics": "Analytics"
+		}
+	},
 	"companies": {
 		"emptyCombobox": "No companies available.",
 		"select": "Select company",

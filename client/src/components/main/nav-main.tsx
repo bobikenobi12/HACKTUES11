@@ -1,6 +1,5 @@
-import { MailIcon, PlusCircleIcon, type LucideIcon } from "lucide-react";
+import { PlusCircleIcon, type LucideIcon } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
 import {
 	SidebarGroup,
 	SidebarGroupContent,
@@ -11,6 +10,7 @@ import {
 import { useMessages } from "@/hooks/useMessages";
 import { useDialogStore } from "@/stores/dialog-store";
 import { Link as RouterLink } from "@tanstack/react-router";
+import { LanguagePicker } from "../elements/language-picker";
 
 export function NavMain({
 	items,
@@ -41,19 +41,22 @@ export function NavMain({
 							<span>{t("navAction")}</span>
 						</SidebarMenuButton>
 
-						<Button
+						<div className="flex items-center gap-2">
+							<LanguagePicker />
+						</div>
+						{/* <Button
 							size="icon"
 							className="h-9 w-9 shrink-0 group-data-[collapsible=icon]:opacity-0"
 							variant="outline"
 						>
 							<MailIcon />
 							<span className="sr-only">See All</span>
-						</Button>
+						</Button> */}
 					</SidebarMenuItem>
 				</SidebarMenu>
 				<SidebarMenu>
-					{items.map((item) => (
-						<RouterLink to={item.url}>
+					{items.map((item, index) => (
+						<RouterLink to={item.url} key={index}>
 							<SidebarMenuItem key={item.title}>
 								<SidebarMenuButton tooltip={item.title}>
 									{item.icon && <item.icon />}

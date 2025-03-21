@@ -19,6 +19,7 @@ import { Route as NavGuestSignUpImport } from './routes/_nav/_guest/sign-up'
 import { Route as NavGuestLoginImport } from './routes/_nav/_guest/login'
 import { Route as NavAuthEmployeesImport } from './routes/_nav/_auth/employees'
 import { Route as NavAuthDashboardImport } from './routes/_nav/_auth/dashboard'
+import { Route as NavAuthAnalyticsImport } from './routes/_nav/_auth/analytics'
 
 // Create/Update Routes
 
@@ -67,6 +68,12 @@ const NavAuthDashboardRoute = NavAuthDashboardImport.update({
   getParentRoute: () => NavAuthRoute,
 } as any)
 
+const NavAuthAnalyticsRoute = NavAuthAnalyticsImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => NavAuthRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -98,6 +105,13 @@ declare module '@tanstack/react-router' {
       fullPath: ''
       preLoaderRoute: typeof NavGuestImport
       parentRoute: typeof NavImport
+    }
+    '/_nav/_auth/analytics': {
+      id: '/_nav/_auth/analytics'
+      path: '/analytics'
+      fullPath: '/analytics'
+      preLoaderRoute: typeof NavAuthAnalyticsImport
+      parentRoute: typeof NavAuthImport
     }
     '/_nav/_auth/dashboard': {
       id: '/_nav/_auth/dashboard'
@@ -133,11 +147,13 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 interface NavAuthRouteChildren {
+  NavAuthAnalyticsRoute: typeof NavAuthAnalyticsRoute
   NavAuthDashboardRoute: typeof NavAuthDashboardRoute
   NavAuthEmployeesRoute: typeof NavAuthEmployeesRoute
 }
 
 const NavAuthRouteChildren: NavAuthRouteChildren = {
+  NavAuthAnalyticsRoute: NavAuthAnalyticsRoute,
   NavAuthDashboardRoute: NavAuthDashboardRoute,
   NavAuthEmployeesRoute: NavAuthEmployeesRoute,
 }
@@ -174,6 +190,7 @@ const NavRouteWithChildren = NavRoute._addFileChildren(NavRouteChildren)
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '': typeof NavGuestRouteWithChildren
+  '/analytics': typeof NavAuthAnalyticsRoute
   '/dashboard': typeof NavAuthDashboardRoute
   '/employees': typeof NavAuthEmployeesRoute
   '/login': typeof NavGuestLoginRoute
@@ -183,6 +200,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '': typeof NavGuestRouteWithChildren
+  '/analytics': typeof NavAuthAnalyticsRoute
   '/dashboard': typeof NavAuthDashboardRoute
   '/employees': typeof NavAuthEmployeesRoute
   '/login': typeof NavGuestLoginRoute
@@ -195,6 +213,7 @@ export interface FileRoutesById {
   '/_nav': typeof NavRouteWithChildren
   '/_nav/_auth': typeof NavAuthRouteWithChildren
   '/_nav/_guest': typeof NavGuestRouteWithChildren
+  '/_nav/_auth/analytics': typeof NavAuthAnalyticsRoute
   '/_nav/_auth/dashboard': typeof NavAuthDashboardRoute
   '/_nav/_auth/employees': typeof NavAuthEmployeesRoute
   '/_nav/_guest/login': typeof NavGuestLoginRoute
@@ -203,15 +222,30 @@ export interface FileRoutesById {
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '' | '/dashboard' | '/employees' | '/login' | '/sign-up'
+  fullPaths:
+    | '/'
+    | ''
+    | '/analytics'
+    | '/dashboard'
+    | '/employees'
+    | '/login'
+    | '/sign-up'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '' | '/dashboard' | '/employees' | '/login' | '/sign-up'
+  to:
+    | '/'
+    | ''
+    | '/analytics'
+    | '/dashboard'
+    | '/employees'
+    | '/login'
+    | '/sign-up'
   id:
     | '__root__'
     | '/'
     | '/_nav'
     | '/_nav/_auth'
     | '/_nav/_guest'
+    | '/_nav/_auth/analytics'
     | '/_nav/_auth/dashboard'
     | '/_nav/_auth/employees'
     | '/_nav/_guest/login'
@@ -257,6 +291,7 @@ export const routeTree = rootRoute
       "filePath": "_nav/_auth.tsx",
       "parent": "/_nav",
       "children": [
+        "/_nav/_auth/analytics",
         "/_nav/_auth/dashboard",
         "/_nav/_auth/employees"
       ]
@@ -268,6 +303,10 @@ export const routeTree = rootRoute
         "/_nav/_guest/login",
         "/_nav/_guest/sign-up"
       ]
+    },
+    "/_nav/_auth/analytics": {
+      "filePath": "_nav/_auth/analytics.tsx",
+      "parent": "/_nav/_auth"
     },
     "/_nav/_auth/dashboard": {
       "filePath": "_nav/_auth/dashboard.tsx",

@@ -23,7 +23,7 @@ import {
 	useSidebar,
 } from "@/components/ui/sidebar";
 import { useMessages } from "@/hooks/useMessages";
-import { useAuthStore } from "@/stores/auth-store";
+import { useAuthStore, type UserProfile } from "@/stores/auth-store";
 import { useDialogStore } from "@/stores/dialog-store";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
@@ -37,7 +37,9 @@ export function NavUser() {
 	// profile dialog states
 	const setProfileDialog = useDialogStore((state) => state.setProfileDialog);
 
+	const setUserProfile = useAuthStore((state) => state.setProfile);
 	const setSession = useAuthStore((state) => state.setSession);
+
 	const navigate = useNavigate();
 
 	const { isLoading, isError, data, error } = useQuery({
@@ -61,19 +63,10 @@ export function NavUser() {
 				throw new Error("Network response was not ok");
 			}
 
-			const data = await response.json();
+			const data: UserProfile = await response.json();
 
-			return data as Promise<{
-				name: string;
-				email: string;
-				avatar: string;
-				role: string;
-				phoneNumber: string;
-				countryCode: string;
-				local: string;
-				username: string;
-				message: string;
-			}>;
+			setUserProfile(data);
+			return data;
 		},
 	});
 

@@ -31,21 +31,28 @@ export const LanguagePicker: React.FC<LanguagePickerProps> = () => {
 	useEffect(() => {
 		// Set the lang attribute on the <html> element
 		document.documentElement.lang = language;
+		console.log("Language changed to", language);
+		console.log("Display language", displayLanguage);
 	}, [language]);
 
 	return (
-		<DropdownMenu open={dropdownOpened} onOpenChange={setDropdownOpened}>
-			<DropdownMenuTrigger>{displayLanguage}</DropdownMenuTrigger>
-			<DropdownMenuContent>
-				{locales.map((l) => (
-					<DropdownMenuItem
-						key={l.iso}
-						onClick={() => setLanguage(l.iso)}
-					>
-						{l.name}
-					</DropdownMenuItem>
-				))}
-			</DropdownMenuContent>
-		</DropdownMenu>
+		<div className="block">
+			<DropdownMenu
+				open={dropdownOpened}
+				onOpenChange={setDropdownOpened}
+			>
+				<DropdownMenuTrigger>{displayLanguage}</DropdownMenuTrigger>
+				<DropdownMenuContent>
+					{locales.map((l) => (
+						<DropdownMenuItem
+							key={l.iso}
+							onClick={() => setLanguage(l.iso)}
+						>
+							{l.name}
+						</DropdownMenuItem>
+					))}
+				</DropdownMenuContent>
+			</DropdownMenu>
+		</div>
 	);
 };

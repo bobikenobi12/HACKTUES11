@@ -5,17 +5,13 @@ export interface Session {
 }
 
 export interface UserProfile {
-	name?: string;
-	email?: string | null;
-	phone?: string | null;
-	newsletter?: boolean;
-	locale?: string;
-	//   avatar_url?: string;
-	//   email_verified?: boolean;
-	//   full_name?: string;
-	//   phone_verified?: boolean;
-	//   default_delivery_address?: string | null;
-	//   default_billing_address?: string | null;
+	name: string;
+	email: string | null;
+	phoneNumber: string | null;
+	local: string;
+	countryCode: string;
+	username: string;
+	role: string;
 }
 
 interface AuthStore {
