@@ -25,6 +25,7 @@ export interface CompanyStore {
 	selectedCompany: Company | null;
 	setCompanies: (companies: Company[]) => void;
 	addEmployeeToCompany: (employee: Employee) => void;
+	removeEmployeeFromCompany: (employee: Employee) => void;
 	setSelectedCompany: (company: Company) => void;
 }
 export const useCompanyStore = create<CompanyStore>((set) => ({
@@ -35,15 +36,51 @@ export const useCompanyStore = create<CompanyStore>((set) => ({
 		if (!employee) return;
 		const selectedCompany = useCompanyStore.getState().selectedCompany;
 		if (!selectedCompany) return;
-		const company: Company = {
-			...selectedCompany,
-			id: selectedCompany.id,
-			name: selectedCompany.name,
-			employees: selectedCompany.employees || [],
-		};
-		if (!company.employees) company.employees = [];
-		company.employees.push(employee);
-		set({ selectedCompany: company });
+		const updatedCompanies = useCompanyStore
+			.getState()
+			.companies.map((company) => {
+				if (company.id === selectedCompany.id) {
+					return {
+						...company,
+						employees: [...company.employees, employee],
+					};
+				}
+				return company;
+			});
+		set({
+			companies: updatedCompanies,
+			selectedCompany: {
+				...selectedCompany,
+				employees: [...selectedCompany.employees, employee],
+			},
+		});
+	},
+	removeEmployeeFromCompany: (employee: Employee) => {
+		if (!employee) return;
+		const selectedCompany = useCompanyStore.getState().selectedCompany;
+		if (!selectedCompany) return;
+		const updatedCompanies = useCompanyStore
+			.getState()
+			.companies.map((company) => {
+				if (company.id === selectedCompany.id) {
+					return {
+						...company,
+						employees: company.employees.filter(
+							(emp) => emp.id !== employee.id
+						),
+					};
+				}
+				return company;
+			});
+		set({
+			companies: updatedCompanies,
+			selectedCompany: {
+				...selectedCompany,
+				employees: selectedCompany.employees.filter(
+					(emp) => emp.id !== employee.id
+				),
+			},
+		});
 	},
 	setSelectedCompany: (company: Company) => set({ selectedCompany: company }),
 }));

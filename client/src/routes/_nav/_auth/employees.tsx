@@ -42,12 +42,14 @@ export const Route = createFileRoute("/_nav/_auth/employees")({
 	component: EmployeesPage,
 });
 
+import { useMessages } from "@/hooks/useMessages";
 import type { ColumnDef } from "@tanstack/react-table";
+import { toast } from "sonner";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 
-export const columns: ColumnDef<AddEmployee>[] = [
+export const columns: ColumnDef<Employee>[] = [
 	{
 		accessorKey: "name",
 		header: "Name",
@@ -82,6 +84,62 @@ export const columns: ColumnDef<AddEmployee>[] = [
 		cell: ({ row }) => {
 			const employee = row.original;
 
+			const { t } = useMessages("nav");
+
+			const removeEmployeeFromCompany = useCompanyStore(
+				(state) => state.removeEmployeeFromCompany
+			);
+			const selectedCompany = useCompanyStore(
+				(state) => state.selectedCompany
+			);
+
+			const removeEmployee = useMutation({
+				mutationFn: async (employee: Employee) => {
+					if (!selectedCompany) {
+						toast.error(t("removeEmployee.uknownCompany"));
+						throw new Error(t("removeEmployee.uknownCompany"));
+					}
+
+					const response = await fetch(
+						`${import.meta.env.VITE_SERVER_URL}/company/${selectedCompany.id}/employee/${employee.id}`,
+						{
+							method: "DELETE",
+							headers: {
+								"Content-Type": "application/json",
+								Authorization: `Bearer ${JSON.parse(localStorage.getItem("client-session") || "{}").token}`,
+							},
+						}
+					);
+
+					if (!response.ok) {
+						toast.error(
+							t("removeEmployee.error", {
+								employeeName: employee.name,
+								companyName: selectedCompany.name,
+							})
+						);
+						throw new Error(
+							t("removeEmployee.error", {
+								employeeName: employee.name,
+								companyName: selectedCompany.name,
+							})
+						);
+					}
+
+					toast.success(
+						t("removeEmployee.success", {
+							employeeName: employee.name,
+							companyName: selectedCompany.name,
+						})
+					);
+
+					const data = await response.json();
+
+					removeEmployeeFromCompany(employee);
+					return data;
+				},
+			});
+
 			return (
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
@@ -101,7 +159,11 @@ export const columns: ColumnDef<AddEmployee>[] = [
 						</DropdownMenuItem>
 						<DropdownMenuSeparator />
 						<DropdownMenuItem>View employee</DropdownMenuItem>
-						<DropdownMenuItem>
+						<DropdownMenuItem
+							onClick={() => {
+								removeEmployee.mutate(employee);
+							}}
+						>
 							<Trash2 />
 							Remove employee
 						</DropdownMenuItem>

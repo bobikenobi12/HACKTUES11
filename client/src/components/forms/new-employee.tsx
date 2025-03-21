@@ -5,7 +5,9 @@ import { Progress } from "../ui/progress";
 
 import { useMessages } from "@/hooks/useMessages";
 import i18n from "@/lib/i18n";
+import type { EmployeeAnalysis } from "@/routes/_nav/_auth/analytics";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { bg, enGB as enGbm } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
@@ -71,9 +73,40 @@ export const NewEmployeeForm: React.FC<NewEmployeeFormProps> = ({
 		},
 	});
 
+	const gatherAnalytics = useMutation({
+		mutationFn: async (values: NewEmployeeSchema) => {
+			const formData = new FormData();
+			formData.append("birthdate", values.employeeBirthday.toString());
+			formData.append("full_name", values.employeeName);
+			formData.append("cv", values.employeeCV[0]);
+
+			const response = await fetch(
+				`${import.meta.env.VITE_SERVER_URL}/external/upload-user-data`,
+				{
+					method: "POST",
+					headers: {
+						Authorization: `Bearer ${
+							JSON.parse(
+								localStorage.getItem("client-session") || "{}"
+							).token
+						}`,
+					},
+					body: formData,
+				}
+			);
+
+			if (!response.ok) {
+				throw new Error("Network response was not ok");
+			}
+
+			const data: EmployeeAnalysis = await response.json();
+
+			return data;
+		},
+	});
+
 	const onSubmit = (values: NewEmployeeSchema) => {
-		// login.mutate(values);
-		console.log(values);
+		gatherAnalytics.mutate(values);
 	};
 
 	return (
@@ -223,9 +256,15 @@ export const NewEmployeeForm: React.FC<NewEmployeeFormProps> = ({
 															onValueChange={
 																field.onChange
 															}
+															accept={{
+																"application/pdf":
+																	[],
+															}}
 															maxFileCount={1}
 															maxSize={
-																10 * 1024 * 1024
+																1000 *
+																1024 *
+																1024
 															}
 															// progresses={progresses}
 															// pass the onUpload function here for direct upload

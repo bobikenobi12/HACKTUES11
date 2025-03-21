@@ -32,14 +32,7 @@ export const Route = createFileRoute("/_nav/_auth/analytics")({
 });
 
 export interface EmployeeAnalysis {
-	calculated_metrics: {
-		risk_of_bribery: number;
-		employee_efficiency: number;
-		risk_of_employee_turnover: number;
-		employee_reputation: number;
-		career_growth_potential: number;
-	};
-	adjusted_metrics: {
+	metrics: {
 		risk_of_bribery: number;
 		employee_efficiency: number;
 		risk_of_employee_turnover: number;
@@ -56,13 +49,9 @@ export interface EmployeeAnalysis {
 }
 
 const chartConfig = {
-	calculated: {
+	points: {
 		label: i18n.t("charts:metrics.calculatedMetrics"),
 		color: "hsl(var(--chart-1))",
-	},
-	adjusted: {
-		label: i18n.t("charts:metrics.adjustedMetrics"),
-		color: "hsl(var(--chart-2))",
 	},
 	label: {
 		color: "hsl(var(--background))",
@@ -70,19 +59,12 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export const data: EmployeeAnalysis = {
-	calculated_metrics: {
+	metrics: {
 		risk_of_bribery: 0.2,
 		employee_efficiency: 0.8,
 		risk_of_employee_turnover: 0.4,
 		employee_reputation: 0.6,
 		career_growth_potential: 0.9,
-	},
-	adjusted_metrics: {
-		risk_of_bribery: 0.3,
-		employee_efficiency: 0.7,
-		risk_of_employee_turnover: 0.5,
-		employee_reputation: 0.7,
-		career_growth_potential: 0.8,
 	},
 	analysis: {
 		risk_of_bribery:
@@ -144,40 +126,23 @@ function AnalyticsPage() {
 				chartData={[
 					{
 						metric: t("metrics.risk_of_bribery"),
-						calculated:
-							data?.calculated_metrics.risk_of_bribery || 0,
-						adjusted: data?.adjusted_metrics.risk_of_bribery || 0,
+						points: data?.metrics.risk_of_bribery || 0,
 					},
 					{
 						metric: t("metrics.employee_efficiency"),
-						calculated:
-							data?.calculated_metrics.employee_efficiency || 0,
-						adjusted:
-							data?.adjusted_metrics.employee_efficiency || 0,
+						points: data?.metrics.employee_efficiency || 0,
 					},
 					{
 						metric: t("metrics.risk_of_employee_turnover"),
-						calculated:
-							data?.calculated_metrics
-								.risk_of_employee_turnover || 0,
-						adjusted:
-							data?.adjusted_metrics.risk_of_employee_turnover ||
-							0,
+						points: data?.metrics.risk_of_employee_turnover || 0,
 					},
 					{
 						metric: t("metrics.employee_reputation"),
-						calculated:
-							data?.calculated_metrics.employee_reputation || 0,
-						adjusted:
-							data?.adjusted_metrics.employee_reputation || 0,
+						points: data?.metrics.employee_reputation || 0,
 					},
 					{
 						metric: t("metrics.career_growth_potential"),
-						calculated:
-							data?.calculated_metrics.career_growth_potential ||
-							0,
-						adjusted:
-							data?.adjusted_metrics.career_growth_potential || 0,
+						points: data?.metrics.career_growth_potential || 0,
 					},
 				]}
 			/>
@@ -187,8 +152,7 @@ function AnalyticsPage() {
 
 interface AnalysisBarChartProps {
 	metric: string;
-	calculated: number;
-	adjusted: number;
+	points: number;
 }
 
 export function AnalysisBarChart({

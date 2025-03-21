@@ -23,5 +23,10 @@
 		"select": "Избери фирма",
 		"search": "Потърси фирма",
 		"create": "Създай нова фирма '{{companyName}}'"
+	},
+	"removeEmployee": {
+		"uknownCompany": "Не може да премахнете служител от несъществуваща фирма!",
+		"success": "Успешно премахнате {{employeeName}} от {{companyName}}!",
+		"error": "Грешка при премахване на {{employeeName}} от {{companyName}}."
 	}
 }

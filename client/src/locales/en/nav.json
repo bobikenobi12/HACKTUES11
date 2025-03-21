@@ -23,5 +23,10 @@
 		"select": "Select company",
 		"search": "Search company",
 		"create": "Create new company '{{companyName}}'"
+	},
+	"removeEmployee": {
+		"uknownCompany": "Cannot remove an employee from an unknown company!",
+		"success": "Successfully removed {{employeeName}} from {{companyName}}!",
+		"error": "Error removing {{employeeName}} from {{companyName}}."
 	}
 }
