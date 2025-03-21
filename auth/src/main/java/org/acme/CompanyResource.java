@@ -60,4 +60,31 @@ public class CompanyResource {
 
         return Response.status(Response.Status.CREATED).entity(employee).build();
     }
+
+    @DELETE
+    @Path("/{companyId}/employee/{employeeId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deleteEmployee(@PathParam("companyId") Long companyId, @PathParam("employeeId") Long employeeId) {
+        Optional<Company> optionalCompany = companyRepository.findById(companyId);
+
+        if (optionalCompany.isEmpty()) {
+            return Response.status(Response.Status.NOT_FOUND).entity("Company not found").build();
+        }
+
+        Optional<Employee> optionalEmployee = employeeRepository.findById(employeeId);
+
+        if (optionalEmployee.isEmpty()) {
+            return Response.status(Response.Status.NOT_FOUND).entity("Employee not found").build();
+        }
+
+        Company company = optionalCompany.get();
+        Employee employee = optionalEmployee.get();
+
+        company.getEmployees().remove(employee);
+        companyRepository.save(company);
+
+        employeeRepository.delete(employee);
+
+        return Response.status(Response.Status.NO_CONTENT).build();
+    }
 }

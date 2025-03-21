@@ -21,4 +21,12 @@ public class EmployeeRepository {
     public Optional<Employee> findById(Long id) {
         return Optional.ofNullable(em.find(Employee.class, id));
     }
+
+    @Transactional
+    public void delete(Employee employee) {
+        Employee managedEmployee = em.contains(employee) ? employee : em.find(Employee.class, employee.getId());
+        if (managedEmployee != null) {
+            em.remove(managedEmployee);
+        }
+    }
 }
