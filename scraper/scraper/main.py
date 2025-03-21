@@ -20,8 +20,6 @@ from selenium.webdriver.chrome.options import Options
 import time
 from datetime import datetime
 
-import os
-
 app = FastAPI()
 
 
@@ -94,7 +92,7 @@ def scrape_company_info(company_name: str) -> dict:
     try:
         options = uc.ChromeOptions()
         options.add_argument('--headless')
-        # options.add_argument('--start-maximized')
+        options.add_argument('--start-maximized')
         options.add_argument('--disable-gpu')
         options.add_argument('--no-sandbox')
         options.add_argument('--disable-dev-shm-usage')
@@ -105,15 +103,6 @@ def scrape_company_info(company_name: str) -> dict:
 
         driver = uc.Chrome(options=options)
         driver.set_page_load_timeout(30)  # Increased timeout
-
-        # if os.getenv('CHROME_BIN'):
-        #     options.binary_location = os.getenv('CHROME_BIN')
-
-        # driver = uc.Chrome(
-        #     driver_executable_path=os.getenv('CHROME_DRIVER'),
-        #     options=options,
-        #     version_main=122  # Match installed Chrome version
-        # )
 
         try:
             # Navigate and wait longer for Cloudflare
@@ -166,6 +155,7 @@ def scrape_company_info(company_name: str) -> dict:
             wait.until(EC.presence_of_element_located((By.TAG_NAME, "body")))
 
             # Try to get text from each element type
+            selectors = ['h1', 'h2', 'h3', 'p', '.company-info', '.details']
             selectors = ['h1', 'h2', 'h3', 'p', '.company-info', '.details', 'table table-bordered table-sm mt-4', 'tr',
                          'th', 'td']
             for selector in selectors:
@@ -294,7 +284,7 @@ Return this exact JSON structure with appropriate values:
         return scoring_template
 
 
-@app.post("/upload-user-data")
+@app.post("/upload-user-data/")
 async def upload_user_data(
         full_name: str = Form(...),
         birthdate: str = Form(...),
@@ -348,32 +338,24 @@ async def upload_user_data(
                 "employment_gaps": 0,
                 "linkedin_recommendations": 50
             }
-            print("Candidate_scoring: " + str(candidate_scoring))
 
-        response_json = {
+        return {
             "full_name": full_name,
             "birthdate": birthdate,
             "cv_content": pdf_text,
             "cv_summary": summary,
             "companies": companies,
             "company_details": company_details,
+
             "candidate_scoring": candidate_scoring
         }
 
-        print(response_json)
-        return response_json
-
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Error processing PDF: {str(e)}")
-
-
-@app.get("/home")
-def home():
-    return {"message": "Welcome to the CV Analyzer API!"}
 
 
 # Run the application
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, log_level="info")
+    uvicorn.run(app, host="0.0.0.0", port=8000)
