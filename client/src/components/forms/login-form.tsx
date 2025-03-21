@@ -52,7 +52,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
 }) => {
 	const { t } = useMessages("auth");
 
-	const { login } = useAuth(navigateTo || "/");
+	const { login } = useAuth(navigateTo || "/employees");
 	// const navigate = useNavigate({ from: Route.fullPath });
 
 	const form = useForm<LoginFormSchema>({
