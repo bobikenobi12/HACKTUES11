@@ -15,7 +15,17 @@ import {
 	Undo2,
 	Users,
 } from "lucide-react";
-import { PolarAngleAxis, PolarGrid, Radar, RadarChart } from "recharts";
+import {
+	Area,
+	AreaChart,
+	CartesianGrid,
+	PolarAngleAxis,
+	PolarGrid,
+	Radar,
+	RadarChart,
+	XAxis,
+	YAxis,
+} from "recharts";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
@@ -29,6 +39,8 @@ import { Separator } from "../ui/separator";
 
 import html2canvas from "html2canvas-pro";
 import jsPDF from "jspdf";
+import React from "react";
+import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
 
 const companies: Company = {
 	id: "1",
@@ -124,7 +136,31 @@ const radarChartConfig = {
 	},
 } satisfies ChartConfig;
 
+const employeeData = [
+	{ employee: "Alice", turnoverRisk: 65, reputation: 80 },
+	{ employee: "Bob", turnoverRisk: 50, reputation: 90 },
+	{ employee: "Charlie", turnoverRisk: 75, reputation: 70 },
+	{ employee: "Diana", turnoverRisk: 30, reputation: 95 },
+	{ employee: "Evan", turnoverRisk: 90, reputation: 60 },
+	{ employee: "Fiona", turnoverRisk: 40, reputation: 85 },
+	{ employee: "George", turnoverRisk: 55, reputation: 75 },
+	{ employee: "Hannah", turnoverRisk: 70, reputation: 65 },
+];
+
+const chartConfig = {
+	turnoverRisk: {
+		label: "Risk of Turnover",
+		color: "hsl(var(--chart-1))",
+	},
+	reputation: {
+		label: "Reputation Score",
+		color: "hsl(var(--chart-2))",
+	},
+} satisfies ChartConfig;
+
 export function SectionCards() {
+	const [timeRange, setTimeRange] = React.useState("all");
+
 	const generatePDF = async () => {
 		const input = document.getElementById("pdf-content");
 		if (!input) return;
@@ -395,6 +431,115 @@ export function SectionCards() {
 					</CardContent>
 				</Card>
 			</div>
+
+			<Separator className="border-dashed my-6 px-4" />
+			<Card className="@container/card mx-4 my-2">
+				<CardHeader className="relative">
+					<CardTitle>Employee Risk Analysis</CardTitle>
+					<CardDescription>
+						Comparison of Risk of Turnover vs Reputation
+					</CardDescription>
+					<div className="absolute right-4 top-4">
+						<ToggleGroup
+							type="single"
+							value={timeRange}
+							onValueChange={setTimeRange}
+							variant="outline"
+							className="@[767px]/card:flex hidden"
+						>
+							<ToggleGroupItem value="all" className="h-8 px-2.5">
+								All Employees
+							</ToggleGroupItem>
+						</ToggleGroup>
+					</div>
+				</CardHeader>
+				<CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
+					<ChartContainer
+						config={chartConfig}
+						className="aspect-auto h-[250px] w-full"
+					>
+						<AreaChart data={employeeData}>
+							<defs>
+								<linearGradient
+									id="fillTurnover"
+									x1="0"
+									y1="0"
+									x2="0"
+									y2="1"
+								>
+									<stop
+										offset="5%"
+										stopColor="var(--color-turnover)"
+										stopOpacity={0.8}
+									/>
+									<stop
+										offset="95%"
+										stopColor="var(--color-turnover)"
+										stopOpacity={0.1}
+									/>
+								</linearGradient>
+								<linearGradient
+									id="fillReputation"
+									x1="0"
+									y1="0"
+									x2="0"
+									y2="1"
+								>
+									<stop
+										offset="5%"
+										stopColor="var(--color-reputation)"
+										stopOpacity={0.8}
+									/>
+									<stop
+										offset="95%"
+										stopColor="var(--color-reputation)"
+										stopOpacity={0.1}
+									/>
+								</linearGradient>
+							</defs>
+							<CartesianGrid
+								vertical={false}
+								strokeDasharray="3 3"
+							/>
+							<XAxis
+								dataKey="employee"
+								tickLine={false}
+								axisLine={false}
+								tickMargin={8}
+							/>
+							<YAxis
+								domain={[0, 100]}
+								tickLine={false}
+								axisLine={false}
+								tickMargin={8}
+							/>
+							<ChartTooltip
+								cursor={false}
+								content={
+									<ChartTooltipContent
+										labelFormatter={(value) => value}
+										indicator="dot"
+									/>
+								}
+							/>
+							<Area
+								dataKey="turnoverRisk"
+								type="natural"
+								fill="url(#fillTurnover)"
+								stroke="var(--color-turnover)"
+								stackId="a"
+							/>
+							<Area
+								dataKey="reputation"
+								type="natural"
+								fill="url(#fillReputation)"
+								stroke="var(--color-reputation)"
+								stackId="a"
+							/>
+						</AreaChart>
+					</ChartContainer>
+				</CardContent>
+			</Card>
 		</div>
 	);
 }

@@ -73,6 +73,9 @@ export const NewEmployeeForm: React.FC<NewEmployeeFormProps> = ({
 		},
 	});
 
+	const controller = new AbortController();
+	const timeoutId = setTimeout(() => controller.abort(), 600000); // 10 minutes
+
 	const gatherAnalytics = useMutation({
 		mutationFn: async (values: NewEmployeeSchema) => {
 			const formData = new FormData();
@@ -91,6 +94,7 @@ export const NewEmployeeForm: React.FC<NewEmployeeFormProps> = ({
 							).token
 						}`,
 					},
+					signal: controller.signal,
 					body: formData,
 				}
 			);
@@ -100,6 +104,8 @@ export const NewEmployeeForm: React.FC<NewEmployeeFormProps> = ({
 			}
 
 			const data: EmployeeAnalysis = await response.json();
+
+			clearTimeout(timeoutId);
 
 			return data;
 		},
