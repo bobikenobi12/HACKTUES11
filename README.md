@@ -17,7 +17,7 @@ HR-buddy - Уеб приложение, базирано на микросърв
 
 **Главен сървиз:** Java, Quarkus, MYSQL
 
-**Деплоймънт:** Kubernetis, Docker
+**Деплоймънт:** Kubernetes, Docker
 
 
 ## Функционалности
