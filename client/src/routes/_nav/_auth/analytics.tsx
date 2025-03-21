@@ -92,10 +92,32 @@ function AnalyticsPage() {
 	const selectedCompany = useCompanyStore((state) => state.selectedCompany);
 
 	if (!selectedCompany) {
-		return "No company selected";
+		return (
+			<Card className="mx-4 my-2">
+				<CardHeader>
+					<CardTitle className="text-2xl font-semibold">
+						{t("noCompanySelected")}
+					</CardTitle>
+				</CardHeader>
+			</Card>
+		);
 	}
 
-	const totalEmployees = selectedCompany.employees.length;
+	if (!selectedCompany.employees || selectedCompany.employees.length === 0) {
+		return (
+			<Card className="mx-4 my-2">
+				<CardHeader>
+					<CardTitle className="text-2xl font-semibold">
+						{t("noEmployees")}
+					</CardTitle>
+				</CardHeader>
+			</Card>
+		);
+	}
+
+	const totalEmployees = selectedCompany.employees
+		? selectedCompany.employees.length
+		: 0;
 	const avgRiskOfBribery = (
 		selectedCompany.employees.reduce(
 			(sum, emp) => sum + emp.risk_of_bribery,
@@ -219,7 +241,7 @@ function AnalyticsPage() {
 				<Card className="mx-4 my-2">
 					<CardHeader>
 						<CardTitle className="text-xl font-semibold">
-							4. Employee Avatars
+							3. Employee Avatars
 						</CardTitle>
 					</CardHeader>
 					<CardFooter className="flex items-start flex-col gap-2 text-sm">
@@ -247,13 +269,11 @@ function AnalyticsPage() {
 
 				<Separator className="border-dashed my-6 px-4" />
 
-				<Separator className="border-dashed my-6 px-4" />
-
 				{/* show all 5 averages on a radar chart */}
 				<Card className="mx-4 my-2">
 					<CardHeader className="items-center">
 						<CardTitle className="text-xl font-semibold">
-							5. {t("steps.averageMetrics.title")}
+							4. {t("steps.averageMetrics.title")}
 						</CardTitle>
 						<CardDescription>
 							{t("steps.averageMetrics.description")}
@@ -321,7 +341,7 @@ function AnalyticsPage() {
 				<Card className="@container/card mx-4 my-2">
 					<CardHeader className="relative">
 						<CardTitle>
-							6. {t("steps.turnoverVSReputation.title")}
+							5. {t("steps.turnoverVSReputation.title")}
 						</CardTitle>
 						<CardDescription>
 							{t("steps.turnoverVSReputation.description")}

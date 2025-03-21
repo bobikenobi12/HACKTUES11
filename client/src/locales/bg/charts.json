@@ -12,6 +12,43 @@
 		"calculatedMetrics": "Изчислени метрики",
 		"adjustedMetrics": "Коригирани метрики",
 		"metric": "Метрика",
-		"singleEmployee": "Служител"
-	}
+		"singleEmployee": "Служител",
+		"average": "Средно за всички служители"
+	},
+	"downloadPDF": "Изтегли PDF",
+	"downloadCSV": "Изтегли CSV",
+	"employees": {
+		"all": "Всички служители"
+	},
+	"steps": {
+		"companyOverview": "Преглед на компанията",
+		"employeeDetails": "Детайли за служителя",
+		"employeeMetrics": "Метрики на служителя",
+		"employeeAvatars": "Аватари на служителите",
+		"averageMetrics": {
+			"title": "Средни метрики",
+			"description": "Преглед на средните метрики на всички служители."
+		},
+		"turnoverVSReputation": {
+			"title": "Анализ на риска за служителите",
+			"description": "Преглед на риска от обръщаемост на служителите спрямо репутацията на служителите."
+		}
+	},
+	"overview": {
+		"totalEmployees": "Общо служители: {{count}}",
+		"averageRiskOfBribery": "Среден риск да бъде подкупен: {{points}}%",
+		"averageEmployeeEfficiency": "Средна ефективност като служител: {{points}}%",
+		"averageRiskOfEmployeeTurnover": "Среден риск от обръщаемост на служителите: {{points}}%",
+		"averageEmployeeReputation": "Средна репутация като служител: {{points}}%",
+		"averageCareerGrowthPotential": "Среден потенциал за кариерно развитие: {{points}}%"
+	},
+	"employeeOverview": {
+		"efficiency": "Ефективност: {{points}}%",
+		"reputation": "Репутация: {{points}}%",
+		"careerGrowth": "Потенциал за кариерно развитие: {{points}}%",
+		"riskOfBribery": "Риск да бъде подкупен: {{points}}%",
+		"riskOfTurnover": "Риск от обръщаемост: {{points}}%"
+	},
+	"noCompanySelected": "Не е избрана компания.",
+	"noEmployees": "Няма служители. За да видите метриките, трябва да добавите служители."
 }
