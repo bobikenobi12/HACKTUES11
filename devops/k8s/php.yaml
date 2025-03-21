@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: php
+  name: php-deployment
+  namespace: hrbuddy
+spec:
+  selector:
+    matchLabels:
+      app: php
+  template:
+    metadata:
+      labels:
+        app: php
+    spec:
+      containers:
+      - image: bs1704/laravelimage:v3
+        name: php
+        ports:
+        - containerPort: 9000
+          protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: php-service
+  namespace: hrbuddy
+spec:
+  selector:
+    app: php
+  ports:
+    - protocol: TCP
+      port: 9000
+      targetPort: 9000
+
