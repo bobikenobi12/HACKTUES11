@@ -28,10 +28,7 @@ const chartConfig = {
 	},
 } satisfies ChartConfig;
 
-export function CircularProgress(
-	metric: string,
-	chartData: { points: number }[]
-) {
+export function CircularProgress(chartData: { points: number }[]) {
 	return (
 		<Card className="flex flex-col">
 			<CardHeader className="items-center pb-0">
