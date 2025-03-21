@@ -204,7 +204,7 @@ def scrape_company_info(company_name: str) -> dict:
         }
 
 
-def analyze_with_gpt(cv_summary: dict, company_details: list) -> dict:
+def analyze_with_gpt(cv_summary: dict, company_details: list, full_name: str, birthdate: str) -> dict:
     # Define scoring template at function start
     scoring_template = {
         "loyalty": 50,
@@ -237,6 +237,9 @@ CV Summary:
 Company Details:
 {json.dumps(company_details, ensure_ascii=False, indent=2)}
 
+Full Name: {full_name}
+Birthdate: {birthdate}
+
 Rules:
 - Score all metrics between 0-100
 - NO DEFAULT VALUES OF 50
@@ -249,6 +252,10 @@ Rules:
 - Consider the impact and achievements in work experience
 - Consider the overall quality and relevance of the CV content
 - Provide higher scores for exceptional achievements and recognitions
+- Boost ethical_integrity for candidates with strong leadership roles, significant achievements, and positive references
+- Check if the full name and birthdate in the CV align with the provided full name and birthdate raise error if needed
+- If age is found in the CV, check if it is possible based on the provided birthdate raise error if needed
+
 
 Return this exact JSON structure with appropriate values:
 {json.dumps(scoring_template, indent=2)}"""
@@ -279,6 +286,79 @@ Return this exact JSON structure with appropriate values:
     except Exception as e:
         print(f"Error in GPT analysis: {str(e)}")
         return scoring_template
+
+
+@app.post("/upload-user-data")
+async def upload_user_data(
+        full_name: str = Form(...),
+        birthdate: str = Form(...),
+        cv: UploadFile = File(...)
+):
+    try:
+        # Read the uploaded file content
+        pdf_content = await cv.read()
+
+        # Create a PDF document object from bytes
+        pdf_document = fitz.open(stream=pdf_content, filetype="pdf")
+
+        # Extract text from all pages
+        pdf_text = ""
+        for page in pdf_document:
+            pdf_text += page.get_text()
+
+        # Close the document
+        pdf_document.close()
+
+        # Summarize the CV
+        summary = summarize_cv(pdf_text)
+
+        # Extract companies from the CV summary
+        companies = extract_companies(summary)
+
+        company_details = []
+        for company in companies:
+            company_info = scrape_company_info(company)
+            company_details.append(company_info)
+
+        try:
+            candidate_scoring = analyze_with_gpt(summary, company_details, full_name, birthdate)
+        except Exception as e:
+            print(f"Error in GPT analysis: {str(e)}")
+            candidate_scoring = {
+                "loyalty": 50,
+                "ethical_integrity": 50,
+                "job_tenure": 50,
+                "professional_references": 50,
+                "online_professional_reputation": 50,
+                "criminal_record": 0,
+                "regulatory_violations": 0,
+                "work_experience_level": 50,
+                "certifications_achieved": 50,
+                "education_level": 50,
+                "career_progression": 50,
+                "leadership_experience": 50,
+                "career_stability": 50,
+                "salary_history": 50,
+                "employment_gaps": 0,
+                "linkedin_recommendations": 50
+            }
+            print("Candidate_scoring: " + str(candidate_scoring))
+
+        response_json = {
+            "full_name": full_name,
+            "birthdate": birthdate,
+            "cv_content": pdf_text,
+            "cv_summary": summary,
+            "companies": companies,
+            "company_details": company_details,
+            "candidate_scoring": candidate_scoring
+        }
+
+        print(response_json)
+        return response_json
+
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Error processing PDF: {str(e)}")
 
 
 @app.post("/upload-user-data")
