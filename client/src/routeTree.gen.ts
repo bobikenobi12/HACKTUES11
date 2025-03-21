@@ -17,6 +17,7 @@ import { Route as NavGuestImport } from './routes/_nav/_guest'
 import { Route as NavAuthImport } from './routes/_nav/_auth'
 import { Route as NavGuestSignUpImport } from './routes/_nav/_guest/sign-up'
 import { Route as NavGuestLoginImport } from './routes/_nav/_guest/login'
+import { Route as NavAuthEmployeesImport } from './routes/_nav/_auth/employees'
 import { Route as NavAuthDashboardImport } from './routes/_nav/_auth/dashboard'
 
 // Create/Update Routes
@@ -52,6 +53,12 @@ const NavGuestLoginRoute = NavGuestLoginImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => NavGuestRoute,
+} as any)
+
+const NavAuthEmployeesRoute = NavAuthEmployeesImport.update({
+  id: '/employees',
+  path: '/employees',
+  getParentRoute: () => NavAuthRoute,
 } as any)
 
 const NavAuthDashboardRoute = NavAuthDashboardImport.update({
@@ -99,6 +106,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NavAuthDashboardImport
       parentRoute: typeof NavAuthImport
     }
+    '/_nav/_auth/employees': {
+      id: '/_nav/_auth/employees'
+      path: '/employees'
+      fullPath: '/employees'
+      preLoaderRoute: typeof NavAuthEmployeesImport
+      parentRoute: typeof NavAuthImport
+    }
     '/_nav/_guest/login': {
       id: '/_nav/_guest/login'
       path: '/login'
@@ -120,10 +134,12 @@ declare module '@tanstack/react-router' {
 
 interface NavAuthRouteChildren {
   NavAuthDashboardRoute: typeof NavAuthDashboardRoute
+  NavAuthEmployeesRoute: typeof NavAuthEmployeesRoute
 }
 
 const NavAuthRouteChildren: NavAuthRouteChildren = {
   NavAuthDashboardRoute: NavAuthDashboardRoute,
+  NavAuthEmployeesRoute: NavAuthEmployeesRoute,
 }
 
 const NavAuthRouteWithChildren =
@@ -159,6 +175,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '': typeof NavGuestRouteWithChildren
   '/dashboard': typeof NavAuthDashboardRoute
+  '/employees': typeof NavAuthEmployeesRoute
   '/login': typeof NavGuestLoginRoute
   '/sign-up': typeof NavGuestSignUpRoute
 }
@@ -167,6 +184,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '': typeof NavGuestRouteWithChildren
   '/dashboard': typeof NavAuthDashboardRoute
+  '/employees': typeof NavAuthEmployeesRoute
   '/login': typeof NavGuestLoginRoute
   '/sign-up': typeof NavGuestSignUpRoute
 }
@@ -178,15 +196,16 @@ export interface FileRoutesById {
   '/_nav/_auth': typeof NavAuthRouteWithChildren
   '/_nav/_guest': typeof NavGuestRouteWithChildren
   '/_nav/_auth/dashboard': typeof NavAuthDashboardRoute
+  '/_nav/_auth/employees': typeof NavAuthEmployeesRoute
   '/_nav/_guest/login': typeof NavGuestLoginRoute
   '/_nav/_guest/sign-up': typeof NavGuestSignUpRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '' | '/dashboard' | '/login' | '/sign-up'
+  fullPaths: '/' | '' | '/dashboard' | '/employees' | '/login' | '/sign-up'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '' | '/dashboard' | '/login' | '/sign-up'
+  to: '/' | '' | '/dashboard' | '/employees' | '/login' | '/sign-up'
   id:
     | '__root__'
     | '/'
@@ -194,6 +213,7 @@ export interface FileRouteTypes {
     | '/_nav/_auth'
     | '/_nav/_guest'
     | '/_nav/_auth/dashboard'
+    | '/_nav/_auth/employees'
     | '/_nav/_guest/login'
     | '/_nav/_guest/sign-up'
   fileRoutesById: FileRoutesById
@@ -237,7 +257,8 @@ export const routeTree = rootRoute
       "filePath": "_nav/_auth.tsx",
       "parent": "/_nav",
       "children": [
-        "/_nav/_auth/dashboard"
+        "/_nav/_auth/dashboard",
+        "/_nav/_auth/employees"
       ]
     },
     "/_nav/_guest": {
@@ -250,6 +271,10 @@ export const routeTree = rootRoute
     },
     "/_nav/_auth/dashboard": {
       "filePath": "_nav/_auth/dashboard.tsx",
+      "parent": "/_nav/_auth"
+    },
+    "/_nav/_auth/employees": {
+      "filePath": "_nav/_auth/employees.tsx",
       "parent": "/_nav/_auth"
     },
     "/_nav/_guest/login": {

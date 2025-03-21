@@ -49,8 +49,13 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 const data = {
 	navMain: [
 		{
+			title: "Employees",
+			url: "/employees",
+			icon: UsersIcon,
+		},
+		{
 			title: "Dashboard",
-			url: "#",
+			url: "/dashboard",
 			icon: LayoutDashboardIcon,
 		},
 		{

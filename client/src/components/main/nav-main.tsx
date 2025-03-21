@@ -9,6 +9,7 @@ import {
 	SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { useMessages } from "@/hooks/useMessages";
+import { Link as RouterLink } from "@tanstack/react-router";
 import { NewEmployeeForm } from "../forms/new-employee";
 import {
 	Credenza,
@@ -83,12 +84,14 @@ export function NavMain({
 				</SidebarMenu>
 				<SidebarMenu>
 					{items.map((item) => (
-						<SidebarMenuItem key={item.title}>
-							<SidebarMenuButton tooltip={item.title}>
-								{item.icon && <item.icon />}
-								<span>{item.title}</span>
-							</SidebarMenuButton>
-						</SidebarMenuItem>
+						<RouterLink to={item.url}>
+							<SidebarMenuItem key={item.title}>
+								<SidebarMenuButton tooltip={item.title}>
+									{item.icon && <item.icon />}
+									<span>{item.title}</span>
+								</SidebarMenuButton>
+							</SidebarMenuItem>
+						</RouterLink>
 					))}
 				</SidebarMenu>
 			</SidebarGroupContent>
