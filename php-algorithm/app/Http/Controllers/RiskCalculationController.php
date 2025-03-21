@@ -43,9 +43,22 @@ class RiskCalculationController extends Controller
             'career_growth_potential' => round($this->calculateCareerGrowthPotential($data), 2),
         ];
         $adjusted_values = $this->adjustMetrics($data, $metrics);
+
+        if (is_array($adjusted_values)) {
+            $valid_adjusted_values = array_filter($adjusted_values, function($value) {
+                return is_numeric($value) && $value >= 1 && $value <= 100;
+            });
+
+            if (count($valid_adjusted_values) === count($adjusted_values)) {
+                return response()->json([
+                    'metrics' => $adjusted_values,
+                    'analysis' => $this->analysis,
+                ]);
+            }
+        }
+
         return response()->json([
-            'calculated_metrics' => $metrics,
-            'adjusted_metrics' => $adjusted_values,
+            'metrics' => $metrics,
             'analysis' => $this->analysis,
         ]);
     }
