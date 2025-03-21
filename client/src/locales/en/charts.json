@@ -11,6 +11,41 @@
 		"career_growth_potential": "Career Growth Potential",
 		"calculatedMetrics": "Calculated Metrics",
 		"adjustedMetrics": "Adjusted Metrics",
-		"singleEmployee": "Singular Employee"
+		"singleEmployee": "Singular Employee",
+		"average": "Average of All Employees"
+	},
+	"downloadPDF": "Download PDF",
+	"downloadCSV": "Download CSV",
+	"employees": {
+		"all": "All Employees"
+	},
+	"steps": {
+		"companyOverview": "Company Overview",
+		"employeeDetails": "Employee Details",
+		"employeeMetrics": "Employee Metrics",
+		"employeeAvatars": "Employee Avatars",
+		"averageMetrics": {
+			"title": "Average Metrics",
+			"description": "View the average metrics of all employees."
+		},
+		"turnoverVSReputation": {
+			"title": "Employee Risk Analysis",
+			"description": "View the risk of employee turnover vs employee reputation."
+		}
+	},
+	"overview": {
+		"totalEmployees": "Total Employees: {{count}}",
+		"averageRiskOfBribery": "Average Risk of Bribery: {{points}}%",
+		"averageEmployeeEfficiency": "Average Employee Efficiency: {{points}}%",
+		"averageRiskOfEmployeeTurnover": "Average Risk of Employee Turnover: {{points}}%",
+		"averageEmployeeReputation": "Average Employee Reputation: {{points}}%",
+		"averageCareerGrowthPotential": "Average Career Growth Potential: {{points}}%"
+	},
+	"employeeOverview": {
+		"efficiency": "Efficiency: {{points}}%",
+		"reputation": "Reputation: {{points}}%",
+		"careerGrowth": "Career Growth Potential: {{points}}%",
+		"riskOfBribery": "Risk of Bribery: {{points}}%",
+		"riskOfTurnover": "Risk of Turnover: {{points}}%"
 	}
 }

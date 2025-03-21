@@ -1,20 +1,19 @@
 import { useDialogStore } from "@/stores/dialog-store";
 
-import {
-	Credenza,
-	CredenzaBody,
-	CredenzaClose,
-	CredenzaContent,
-	CredenzaDescription,
-	CredenzaFooter,
-	CredenzaHeader,
-	CredenzaTitle,
-} from "@/components/ui/credenza";
+import { CredenzaDescription } from "@/components/ui/credenza";
 import { useMessages } from "@/hooks/useMessages";
 import { ChangePasswordForm } from "../forms/change-password";
 import { UserInfoForm } from "../forms/user-info-form";
 import { Button } from "../ui/button";
-import { ScrollArea } from "../ui/scroll-area";
+import { Separator } from "../ui/separator";
+import {
+	Sheet,
+	SheetClose,
+	SheetContent,
+	SheetFooter,
+	SheetHeader,
+	SheetTitle,
+} from "../ui/sheet";
 
 export const ProfileDialog = () => {
 	const { t } = useMessages("auth");
@@ -23,45 +22,43 @@ export const ProfileDialog = () => {
 	const profileDialog = useDialogStore((state) => state.profileDialog);
 
 	return (
-		<Credenza open={profileDialog} onOpenChange={setProfileDialog}>
-			<CredenzaContent>
-				<CredenzaHeader>
-					<CredenzaTitle>{t("profile")}</CredenzaTitle>
+		<Sheet open={profileDialog} onOpenChange={setProfileDialog}>
+			<SheetContent>
+				<SheetHeader>
+					<SheetTitle>{t("profile")}</SheetTitle>
 					<CredenzaDescription>
 						{t("profileDescription")}
 					</CredenzaDescription>
-				</CredenzaHeader>
-				<CredenzaBody>
-					<ScrollArea className="h-[400px]">
-						<div className="flex flex-col gap-3 md:flex-row md:gap-8 pr-4">
-							<div className="w-1/2">
-								<UserInfoForm />
-							</div>
-
-							<div className="w-1/2 ">
-								<ChangePasswordForm />
-							</div>
+				</SheetHeader>
+				<div className="grid gap-4 py-4 px-4 overflow-y-scroll overflow-x-clip">
+					<div className="flex flex-col gap-3 pr-4">
+						<div className="w-1/2">
+							<UserInfoForm />
 						</div>
-
-						<div className="mt-10">
-							<h2 className="mb-8 text-3xl">{t("dangerZone")}</h2>
-
-							<Button
-								variant={"outline"}
-								className="text-destructive"
-								// onClick={deleteUser.mutate}
-							>
-								{t("deleteAccount")}
-							</Button>
+						<Separator className="my-8" />
+						<div className="w-1/2 ">
+							<ChangePasswordForm />
 						</div>
-					</ScrollArea>
-				</CredenzaBody>
-				<CredenzaFooter>
-					<CredenzaClose asChild>
+					</div>
+
+					<div className="mt-10">
+						<h2 className="mb-8 text-3xl">{t("dangerZone")}</h2>
+
+						<Button
+							variant={"outline"}
+							className="text-destructive"
+							// onClick={deleteUser.mutate}
+						>
+							{t("deleteAccount")}
+						</Button>
+					</div>
+				</div>
+				<SheetFooter>
+					<SheetClose asChild>
 						<Button>{t("closeProfileModule")}</Button>
-					</CredenzaClose>
-				</CredenzaFooter>
-			</CredenzaContent>
-		</Credenza>
+					</SheetClose>
+				</SheetFooter>
+			</SheetContent>
+		</Sheet>
 	);
 };
