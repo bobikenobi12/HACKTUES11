@@ -310,6 +310,7 @@ function CompanyCombobox() {
 								onSelect={() => {
 									createCompany.mutate(inputValue);
 									setOpen(false);
+									setInputValue("");
 								}}
 								{...{ inputValue, companies }}
 							/>

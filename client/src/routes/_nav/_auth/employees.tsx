@@ -1,4 +1,3 @@
-import { Card, CardContent } from "@/components/ui/card";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { Input } from "@/components/ui/input";
@@ -6,13 +5,13 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
 	DropdownMenu,
+	DropdownMenuCheckboxItem,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuLabel,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Slider } from "@/components/ui/slider";
 import {
 	Table,
 	TableBody,
@@ -22,23 +21,30 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 
-import { MoreHorizontal, Trash2 } from "lucide-react";
+import { ArrowUpDown, MoreHorizontal, Trash2 } from "lucide-react";
 
 import {
 	flexRender,
 	getCoreRowModel,
+	getFilteredRowModel,
+	getPaginationRowModel,
+	getSortedRowModel,
 	useReactTable,
+	type ColumnFiltersState,
+	type SortingState,
+	type VisibilityState,
 } from "@tanstack/react-table";
 
 import { useCompanyStore, type Employee } from "@/stores/company-store";
 import { useMutation } from "@tanstack/react-query";
-import { useState } from "react";
+import React from "react";
 
 export const Route = createFileRoute("/_nav/_auth/employees")({
 	component: EmployeesPage,
 });
 
 import { useMessages } from "@/hooks/useMessages";
+import i18n from "@/lib/i18n";
 import type { ColumnDef } from "@tanstack/react-table";
 import { toast } from "sonner";
 
@@ -48,32 +54,44 @@ import { toast } from "sonner";
 export const columns: ColumnDef<Employee>[] = [
 	{
 		accessorKey: "name",
-		header: "Name",
-		enableSorting: true,
+		header: ({ column }) => {
+			const { t } = useMessages("auth");
+			return (
+				<Button
+					variant="ghost"
+					onClick={() =>
+						column.toggleSorting(column.getIsSorted() === "asc")
+					}
+				>
+					{t("employeeName")}
+					<ArrowUpDown className="ml-2 h-4 w-4" />
+				</Button>
+			);
+		},
 	},
 	{
 		accessorKey: "birth_date",
-		header: "Birth Date",
+		header: i18n.t("auth:birthDate.label"),
 	},
 	{
 		accessorKey: "risk_of_bribery",
-		header: "Bribery Risk",
+		header: i18n.t("charts:metrics.risk_of_bribery"),
 	},
 	{
 		accessorKey: "employee_efficiency",
-		header: "Efficiency",
+		header: i18n.t("charts:metrics.employee_efficiency"),
 	},
 	{
 		accessorKey: "risk_of_employee_turnover",
-		header: "Turnover Risk",
+		header: i18n.t("charts:metrics.risk_of_employee_turnover"),
 	},
 	{
 		accessorKey: "employee_reputation",
-		header: "Reputation",
+		header: i18n.t("charts:metrics.employee_reputation"),
 	},
 	{
 		accessorKey: "career_growth_potential",
-		header: "Growth Potential",
+		header: i18n.t("charts:metrics.career_growth_potential"),
 	},
 	{
 		id: "actions",
@@ -179,154 +197,165 @@ export function DataTable<TData, TValue>({
 	columns,
 	data,
 }: DataTableProps<TData, TValue>) {
+	const { t } = useMessages("auth");
 	const selectedCompany = useCompanyStore((state) => state.selectedCompany);
+
+	const [sorting, setSorting] = React.useState<SortingState>([]);
+	const [columnFilters, setColumnFilters] =
+		React.useState<ColumnFiltersState>([]);
+
+	const [columnVisibility, setColumnVisibility] =
+		React.useState<VisibilityState>({});
 
 	const table = useReactTable({
 		data,
 		columns,
 		getCoreRowModel: getCoreRowModel(),
+		getPaginationRowModel: getPaginationRowModel(),
+		onSortingChange: setSorting,
+		getSortedRowModel: getSortedRowModel(),
+		onColumnFiltersChange: setColumnFilters,
+		getFilteredRowModel: getFilteredRowModel(),
+		onColumnVisibilityChange: setColumnVisibility,
+		state: {
+			sorting,
+			columnFilters,
+			columnVisibility,
+		},
 	});
 
 	return (
-		<div className="rounded-md border">
-			<Table>
-				<TableHeader>
-					{table.getHeaderGroups().map((headerGroup) => (
-						<TableRow key={headerGroup.id}>
-							{headerGroup.headers.map((header) => {
+		<div>
+			<div className="flex items-center py-4">
+				<Input
+					placeholder={t("filterNamesAction")}
+					value={
+						(table.getColumn("name")?.getFilterValue() as string) ??
+						""
+					}
+					onChange={(event) =>
+						table
+							.getColumn("name")
+							?.setFilterValue(event.target.value)
+					}
+					className="max-w-sm"
+				/>
+				<DropdownMenu>
+					<DropdownMenuTrigger asChild>
+						<Button variant="outline" className="ml-auto">
+							{t("columns")}
+						</Button>
+					</DropdownMenuTrigger>
+					<DropdownMenuContent align="end">
+						{table
+							.getAllColumns()
+							.filter(
+								(column) =>
+									column.getCanHide() &&
+									typeof column.columnDef.header !==
+										"function"
+							)
+							.map((column) => {
 								return (
-									<TableHead key={header.id}>
-										{header.isPlaceholder
-											? null
-											: flexRender(
-													header.column.columnDef
-														.header,
-													header.getContext()
-												)}
-									</TableHead>
+									<DropdownMenuCheckboxItem
+										key={column.id}
+										className="capitalize"
+										checked={column.getIsVisible()}
+										onCheckedChange={(value) =>
+											column.toggleVisibility(!!value)
+										}
+									>
+										{typeof column.columnDef.header !==
+											"function" &&
+											column.columnDef.header}
+									</DropdownMenuCheckboxItem>
 								);
 							})}
-						</TableRow>
-					))}
-				</TableHeader>
-				<TableBody>
-					{table.getRowModel().rows?.length ? (
-						table.getRowModel().rows.map((row) => (
-							<TableRow
-								key={row.id}
-								data-state={row.getIsSelected() && "selected"}
-							>
-								{row.getVisibleCells().map((cell) => (
-									<TableCell key={cell.id}>
-										{flexRender(
-											cell.column.columnDef.cell,
-											cell.getContext()
-										)}
-									</TableCell>
-								))}
+					</DropdownMenuContent>
+				</DropdownMenu>
+			</div>
+			<div className="rounded-md border">
+				<Table>
+					<TableHeader>
+						{table.getHeaderGroups().map((headerGroup) => (
+							<TableRow key={headerGroup.id}>
+								{headerGroup.headers.map((header) => {
+									return (
+										<TableHead key={header.id}>
+											{header.isPlaceholder
+												? null
+												: flexRender(
+														header.column.columnDef
+															.header,
+														header.getContext()
+													)}
+										</TableHead>
+									);
+								})}
 							</TableRow>
-						))
-					) : (
-						<TableRow>
-							<TableCell
-								colSpan={columns.length}
-								className="h-24 text-center"
-							>
-								{selectedCompany
-									? "No employees found"
-									: "No company selected"}
-							</TableCell>
-						</TableRow>
-					)}
-				</TableBody>
-			</Table>
+						))}
+					</TableHeader>
+					<TableBody>
+						{table.getRowModel().rows?.length ? (
+							table.getRowModel().rows.map((row) => (
+								<TableRow
+									key={row.id}
+									data-state={
+										row.getIsSelected() && "selected"
+									}
+								>
+									{row.getVisibleCells().map((cell) => (
+										<TableCell key={cell.id}>
+											{flexRender(
+												cell.column.columnDef.cell,
+												cell.getContext()
+											)}
+										</TableCell>
+									))}
+								</TableRow>
+							))
+						) : (
+							<TableRow>
+								<TableCell
+									colSpan={columns.length}
+									className="h-24 text-center"
+								>
+									{selectedCompany
+										? t("employee.noEmployeesFound")
+										: t("noCompanySelected")}
+								</TableCell>
+							</TableRow>
+						)}
+					</TableBody>
+				</Table>
+			</div>
+			<div className="flex items-center justify-end space-x-2 py-4">
+				<Button
+					variant="outline"
+					size="sm"
+					onClick={() => table.previousPage()}
+					disabled={!table.getCanPreviousPage()}
+				>
+					{t("previous")}
+				</Button>
+				<Button
+					variant="outline"
+					size="sm"
+					onClick={() => table.nextPage()}
+					disabled={!table.getCanNextPage()}
+				>
+					{t("next")}
+				</Button>
+			</div>
 		</div>
 	);
 }
 
 function EmployeesPage() {
 	const selectedCompany = useCompanyStore((state) => state.selectedCompany);
-	// const addEmployeeToCompany = useCompanyStore(
-	// 	(state) => state.addEmployeeToCompany
-	// );
-
-	const [filters, setFilters] = useState({
-		name: "",
-		minEfficiency: 0,
-		maxEfficiency: 100,
-	});
-
-	// const addEmployee = useMutation({
-	// 	mutationFn: async (employee: AddEmployee) => {
-	// 		if (!selectedCompany) {
-	// 			throw new Error("No company selected");
-	// 		}
-	// 		const res = await fetch(
-	// 			`${import.meta.env.VITE_SERVER_URL}/company/${selectedCompany.id}/employee`,
-	// 			{
-	// 				method: "POST",
-	// 				headers: {
-	// 					"Content-Type": "application/json",
-	// 					Authorization: `Bearer ${
-	// 						JSON.parse(
-	// 							localStorage.getItem("client-session") || "{}"
-	// 						).token
-	// 					}`,
-	// 				},
-	// 				body: JSON.stringify(employee),
-	// 			}
-	// 		);
-	// 		if (!res.ok) {
-	// 			throw new Error("Failed to add employee");
-	// 		}
-
-	// 		const data: Employee = await res.json();
-
-	// 		addEmployeeToCompany(data);
-	// 		return res.json();
-	// 	},
-	// });
-
-	// const filteredEmployees =
-	// 	selectedCompany &&
-	// 	selectedCompany.employees.filter(
-	// 		(emp) =>
-	// 			emp.name.toLowerCase().includes(filters.name.toLowerCase()) &&
-	// 			emp.employee_efficiency >= filters.minEfficiency &&
-	// 			emp.employee_efficiency <= filters.maxEfficiency
-	// 	);
 
 	return (
 		<div className="p-6 space-y-4">
-			<Card>
-				<CardContent className="p-4 space-y-3">
-					<Input
-						placeholder="Search by name"
-						value={filters.name}
-						onChange={(e) =>
-							setFilters({ ...filters, name: e.target.value })
-						}
-					/>
-					<div className="flex items-center gap-4">
-						<span>Efficiency:</span>
-						<Slider
-							min={0}
-							max={100}
-							value={[
-								filters.minEfficiency,
-								filters.maxEfficiency,
-							]}
-							onValueChange={(value) =>
-								setFilters({
-									...filters,
-									minEfficiency: value[0],
-									maxEfficiency: value[1],
-								})
-							}
-						/>
-					</div>
-				</CardContent>
-			</Card>
 			<DataTable
 				columns={columns}
 				data={selectedCompany?.employees || []}

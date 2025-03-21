@@ -125,7 +125,10 @@ export const NewEmployeeForm: React.FC<NewEmployeeFormProps> = ({
 	const gatherAnalytics = useMutation({
 		mutationFn: async (values: NewEmployeeSchema) => {
 			const formData = new FormData();
-			formData.append("birthdate", values.employeeBirthday.toString());
+			formData.append(
+				"birthdate",
+				format(values.employeeBirthday, "dd/MM/yyyy")
+			);
 			formData.append("full_name", values.employeeName);
 			formData.append("cv", values.employeeCV[0]);
 
