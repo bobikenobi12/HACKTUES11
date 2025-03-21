@@ -2,6 +2,14 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { Input } from "@/components/ui/input";
 
+import {
+	Sheet,
+	SheetContent,
+	SheetDescription,
+	SheetHeader,
+	SheetTitle,
+} from "@/components/ui/sheet";
+
 import { Button } from "@/components/ui/button";
 import {
 	DropdownMenu,
@@ -43,9 +51,17 @@ export const Route = createFileRoute("/_nav/_auth/employees")({
 	component: EmployeesPage,
 });
 
+import {
+	ChartContainer,
+	ChartTooltip,
+	ChartTooltipContent,
+	type ChartConfig,
+} from "@/components/ui/chart";
 import { useMessages } from "@/hooks/useMessages";
 import i18n from "@/lib/i18n";
+import { useDialogStore } from "@/stores/dialog-store";
 import type { ColumnDef } from "@tanstack/react-table";
+import { PolarAngleAxis, PolarGrid, Radar, RadarChart } from "recharts";
 import { toast } from "sonner";
 
 // This type is used to define the shape of our data.
@@ -99,6 +115,10 @@ export const columns: ColumnDef<Employee>[] = [
 			const employee = row.original;
 
 			const { t } = useMessages("nav");
+
+			const setViewEmployeeSheet = useDialogStore(
+				(state) => state.setViewEmployeeSheet
+			);
 
 			const removeEmployeeFromCompany = useCompanyStore(
 				(state) => state.removeEmployeeFromCompany
@@ -169,17 +189,23 @@ export const columns: ColumnDef<Employee>[] = [
 								navigator.clipboard.writeText(employee.name)
 							}
 						>
-							Copy employee name
+							{t("employeeActions.copyName")}
 						</DropdownMenuItem>
 						<DropdownMenuSeparator />
-						<DropdownMenuItem>View employee</DropdownMenuItem>
+						<DropdownMenuItem
+							onClick={() => {
+								setViewEmployeeSheet(true);
+							}}
+						>
+							{t("employeeActions.view")}
+						</DropdownMenuItem>
 						<DropdownMenuItem
 							onClick={() => {
 								removeEmployee.mutate(employee);
 							}}
 						>
 							<Trash2 />
-							Remove employee
+							{t("employeeActions.remove")}
 						</DropdownMenuItem>
 					</DropdownMenuContent>
 				</DropdownMenu>
@@ -351,11 +377,91 @@ export function DataTable<TData, TValue>({
 	);
 }
 
+const radarChartConfig = {
+	points: {
+		label: i18n.t("charts:metrics.singleEmployee"),
+		color: "hsl(var(--chart-1))",
+	},
+} satisfies ChartConfig;
+
 function EmployeesPage() {
+	const { t } = useMessages("charts");
 	const selectedCompany = useCompanyStore((state) => state.selectedCompany);
+
+	const viewEmployeeSheet = useDialogStore(
+		(state) => state.viewEmployeeSheet
+	);
+	const setViewEmployeeSheet = useDialogStore(
+		(state) => state.setViewEmployeeSheet
+	);
 
 	return (
 		<div className="p-6 space-y-4">
+			<Sheet open={viewEmployeeSheet} onOpenChange={setViewEmployeeSheet}>
+				<SheetContent className="min-w-[800px]">
+					<SheetHeader>
+						<SheetTitle>{t("employeeMetrics.title")}</SheetTitle>
+						<SheetDescription>
+							{t("employeeMetrics.description")}
+						</SheetDescription>
+					</SheetHeader>
+					<div className="pb-0">
+						<ChartContainer
+							config={radarChartConfig}
+							className="mx-auto max-h-[450px] w-full"
+						>
+							<RadarChart
+								data={[
+									{
+										metric: t("metrics.risk_of_bribery"),
+										points: Math.random() * 100,
+									},
+									{
+										metric: t(
+											"metrics.employee_efficiency"
+										),
+										points: Math.random() * 100,
+									},
+									{
+										metric: t(
+											"metrics.risk_of_employee_turnover"
+										),
+										points: Math.random() * 100,
+									},
+									{
+										metric: t(
+											"metrics.employee_reputation"
+										),
+										points: Math.random() * 100,
+									},
+									{
+										metric: t(
+											"metrics.career_growth_potential"
+										),
+										points: Math.random() * 100,
+									},
+								]}
+							>
+								<ChartTooltip
+									cursor={false}
+									content={<ChartTooltipContent />}
+								/>
+								<PolarAngleAxis dataKey="metric" />
+								<PolarGrid />
+								<Radar
+									dataKey="points"
+									fill="var(--color-desktop)"
+									fillOpacity={0.6}
+									dot={{
+										r: 4,
+										fillOpacity: 1,
+									}}
+								/>
+							</RadarChart>
+						</ChartContainer>
+					</div>
+				</SheetContent>
+			</Sheet>
 			<DataTable
 				columns={columns}
 				data={selectedCompany?.employees || []}

@@ -19,6 +19,11 @@
 			"search": "Search"
 		}
 	},
+	"employeeActions": {
+		"copyName": "Copy employee name",
+		"remove": "Remove employee",
+		"view": "View employee"
+	},
 	"companies": {
 		"emptyCombobox": "No companies available.",
 		"select": "Select company",

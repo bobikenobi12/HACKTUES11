@@ -1,4 +1,8 @@
 {
+	"employeeMetrics": {
+		"title": "Employee Metrics",
+		"description": "View and analyze employee metrics."
+	},
 	"metrics": {
 		"risk_of_bribery": "Risk of Bribery",
 		"employee_efficiency": "Employee Efficiency",
@@ -6,6 +10,7 @@
 		"employee_reputation": "Employee Reputation",
 		"career_growth_potential": "Career Growth Potential",
 		"calculatedMetrics": "Calculated Metrics",
-		"adjustedMetrics": "Adjusted Metrics"
+		"adjustedMetrics": "Adjusted Metrics",
+		"singleEmployee": "Singular Employee"
 	}
 }

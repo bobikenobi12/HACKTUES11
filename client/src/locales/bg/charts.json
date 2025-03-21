@@ -1,4 +1,8 @@
 {
+	"employeeMetrics": {
+		"title": "Метрики на служителя",
+		"description": "Преглед и анализ на метриките на служителя."
+	},
 	"metrics": {
 		"risk_of_bribery": "Риск да бъде подкупен",
 		"employee_efficiency": "Ефективност като служител",
@@ -7,6 +11,7 @@
 		"career_growth_potential": "Потенциал за кариерно развитие",
 		"calculatedMetrics": "Изчислени метрики",
 		"adjustedMetrics": "Коригирани метрики",
-		"metric": "Метрика"
+		"metric": "Метрика",
+		"singleEmployee": "Служител"
 	}
 }
