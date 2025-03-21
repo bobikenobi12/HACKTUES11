@@ -1,5 +1,6 @@
 import {
 	BarChartIcon,
+	Building2,
 	CameraIcon,
 	Check,
 	ChevronsUpDown,
@@ -8,10 +9,8 @@ import {
 	FileCodeIcon,
 	FileIcon,
 	FileTextIcon,
-	FolderIcon,
 	HelpCircleIcon,
 	LayoutDashboardIcon,
-	ListIcon,
 	SearchIcon,
 	SettingsIcon,
 	UsersIcon,
@@ -51,19 +50,14 @@ import { NavSecondary } from "./nav-secondary";
 const data = {
 	navMain: [
 		{
-			title: i18n.t("nav:header.links.employees"),
-			url: "/employees",
-			icon: UsersIcon,
-		},
-		{
 			title: i18n.t("nav:header.links.dashboard"),
 			url: "/dashboard",
 			icon: LayoutDashboardIcon,
 		},
 		{
-			title: "Lifecycle",
-			url: "#",
-			icon: ListIcon,
+			title: i18n.t("nav:header.links.employees"),
+			url: "/employees",
+			icon: UsersIcon,
 		},
 		{
 			title: i18n.t("nav:header.links.analytics"),
@@ -71,14 +65,9 @@ const data = {
 			icon: BarChartIcon,
 		},
 		{
-			title: "Projects",
+			title: i18n.t("nav:header.links.aboutTheCompany"),
 			url: "#",
-			icon: FolderIcon,
-		},
-		{
-			title: "Team",
-			url: "#",
-			icon: UsersIcon,
+			icon: Building2,
 		},
 	],
 	navClouds: [
