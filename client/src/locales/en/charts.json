@@ -47,5 +47,7 @@
 		"careerGrowth": "Career Growth Potential: {{points}}%",
 		"riskOfBribery": "Risk of Bribery: {{points}}%",
 		"riskOfTurnover": "Risk of Turnover: {{points}}%"
-	}
+	},
+	"noCompanySelected": "No company selected.",
+	"noEmployees": "There are no employees. In order to view metrics, you must add employees."
 }

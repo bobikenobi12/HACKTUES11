@@ -35,5 +35,10 @@
 		"uknownCompany": "Cannot remove an employee from an unknown company!",
 		"success": "Successfully removed {{employeeName}} from {{companyName}}!",
 		"error": "Error removing {{employeeName}} from {{companyName}}."
+	},
+	"settings": {
+		"title": "Settings",
+		"description": "Site settings according to your preferences.",
+		"close": "Close"
 	}
 }
