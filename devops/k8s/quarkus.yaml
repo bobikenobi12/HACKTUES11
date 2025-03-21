@@ -1,0 +1,73 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    app.quarkus.io/quarkus-version: 3.19.3
+    app.quarkus.io/commit-id: 0475a5f90c1e7882499a6a50826588ef1a002724
+    app.quarkus.io/vcs-uri: https://github.com/bobikenobi12/HACKTUES11.git
+    app.quarkus.io/build-timestamp: 2025-03-21 - 14:47:03 +0000
+  labels:
+    app.kubernetes.io/name: auth-service
+    app.kubernetes.io/version: 1.0.0
+    app.kubernetes.io/managed-by: quarkus
+  namespace: hrbuddy
+  name: auth-service
+spec:
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    app.kubernetes.io/name: auth-service
+    app.kubernetes.io/version: 1.0.0
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    app.quarkus.io/quarkus-version: 3.19.3
+    app.quarkus.io/commit-id: 0475a5f90c1e7882499a6a50826588ef1a002724
+    app.quarkus.io/vcs-uri: https://github.com/bobikenobi12/HACKTUES11.git
+    app.quarkus.io/build-timestamp: 2025-03-21 - 14:47:03 +0000
+  labels:
+    app.kubernetes.io/name: auth-service
+    app.kubernetes.io/version: 1.0.0
+    app.kubernetes.io/managed-by: quarkus
+  namespace: hrbuddy
+  name: auth-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: auth-service
+      app.kubernetes.io/version: 1.0.0
+  template:
+    metadata:
+      annotations:
+        app.quarkus.io/quarkus-version: 3.19.3
+        app.quarkus.io/commit-id: 0475a5f90c1e7882499a6a50826588ef1a002724
+        app.quarkus.io/vcs-uri: https://github.com/bobikenobi12/HACKTUES11.git
+        app.quarkus.io/build-timestamp: 2025-03-21 - 14:47:03 +0000
+      labels:
+        app.kubernetes.io/managed-by: quarkus
+        app.kubernetes.io/name: auth-service
+        app.kubernetes.io/version: 1.0.0
+    spec:
+      containers:
+        - env:
+            - name: hrbuddy
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          envFrom:
+            - secretRef:
+                name: app-secrets
+          image: docker.io/antonst07/auth-service:1.0.0
+          imagePullPolicy: Always
+          name: auth-service
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP

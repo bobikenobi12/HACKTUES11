@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: hrbuddy
+  namespace: hrbuddy
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: server.hrbuddy.xyz
+      http:
+        paths:
+          - pathType: Prefix
+            backend:
+              service:
+                name: auth-service
+                port:
+                  number: 80
+            path: /
