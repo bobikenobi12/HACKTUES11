@@ -63,7 +63,9 @@ export function NavMain({
 								</CredenzaBody>
 								<CredenzaFooter>
 									<CredenzaClose asChild>
-										<Button>Cancel</Button>
+										<Button>
+											<span>{t("close")}</span>
+										</Button>
 									</CredenzaClose>
 								</CredenzaFooter>
 							</CredenzaContent>

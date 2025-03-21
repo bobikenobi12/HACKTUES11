@@ -1,5 +1,6 @@
 {
 	"navAction": "Analyze CV",
 	"logout": "Logout",
-	"profile": "Profile"
+	"profile": "Profile",
+	"close": "Close"
 }
