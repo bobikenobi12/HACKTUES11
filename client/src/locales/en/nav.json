@@ -3,6 +3,10 @@
 	"logout": "Logout",
 	"profile": "Profile",
 	"close": "Close",
+	"gatherAnalytics": {
+		"dialogTitle": "New Potential Employees",
+		"dialogContent": "Add a new potential employee to the system."
+	},
 	"companies": {
 		"emptyCombobox": "No companies available.",
 		"select": "Select company",

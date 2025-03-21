@@ -3,6 +3,10 @@
 	"logout": "Изход",
 	"profile": "Профил",
 	"close": "Затвори",
+	"gatherAnalytics": {
+		"dialogTitle": "Нов Потенциален Служители",
+		"dialogContent": "Добавяне на нови потенциални служители в системата"
+	},
 	"companies": {
 		"emptyCombobox": "Няма налични фирми",
 		"select": "Избери фирма",

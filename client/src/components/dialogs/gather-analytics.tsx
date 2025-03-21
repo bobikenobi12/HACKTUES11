@@ -30,9 +30,11 @@ export const GatherAnalyticsDialog = () => {
 		>
 			<CredenzaContent>
 				<CredenzaHeader>
-					<CredenzaTitle>New Potential Employee </CredenzaTitle>
+					<CredenzaTitle>
+						{t("gatherAnalytics.dialogTitle")}
+					</CredenzaTitle>
 					<CredenzaDescription>
-						Add a new potential employee to the system.
+						{t("gatherAnalytics.dialogContent")}
 					</CredenzaDescription>
 				</CredenzaHeader>
 				<CredenzaBody>
