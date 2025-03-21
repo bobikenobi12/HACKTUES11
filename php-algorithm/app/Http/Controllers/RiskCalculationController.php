@@ -3,6 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+use OpenAI\Client;
+use OpenAI\Transporter;
+use OpenAI\Client as OpenAIClient;
+use OpenAI;
 
 class RiskCalculationController extends Controller
 {
@@ -29,13 +35,17 @@ class RiskCalculationController extends Controller
             'employment_gaps' => $request->input('employment_gaps', 0),
             'linkedin_recommendations' => $request->input('linkedin_recommendations', 50),
         ];
-
-        return response()->json([
+        $metrics = [
             'risk_of_bribery' => round($this->calculateRiskOfBribery($data), 2),
             'employee_efficiency' => round($this->calculateEmployeeEfficiency($data), 2),
             'risk_of_employee_turnover' => round($this->calculateRiskOfEmployeeTurnover($data), 2),
             'employee_reputation' => round($this->calculateEmployeeReputation($data), 2),
             'career_growth_potential' => round($this->calculateCareerGrowthPotential($data), 2),
+        ];
+        $adjusted_values = $this->adjustMetrics($data, $metrics);
+        return response()->json([
+            'calculated_metrics' => $metrics,
+            'adjusted_metrics' => $adjusted_values,
             'analysis' => $this->analysis,
         ]);
     }
@@ -45,66 +55,67 @@ class RiskCalculationController extends Controller
             if ($data['ethical_integrity'] < 50) {
                 if ($data['regulatory_violations']) {
                     $this->analysis['risk_of_bribery'] = "Maximum risk: Criminal record, low ethical integrity, and regulatory violations.";
-                    return 100;
+                    $score = 100;
                 }
                 if ($data['online_professional_reputation'] < 40) {
                     $this->analysis['risk_of_bribery'] = "Criminal record and low ethical integrity combined with a poor online reputation.";
-                    return 90;
+                    $score = 90;
                 }
                 $this->analysis['risk_of_bribery'] = "Criminal record and low ethical integrity increase the risk significantly.";
-                return 80;
+                $score = 80;
             } else { // Ethical Integrity is 50 or higher
                 if ($data['online_professional_reputation'] < 40) {
                     $this->analysis['risk_of_bribery'] = "Criminal record present, ethical integrity acceptable, but online reputation is weak.";
-                    return 75;
+                    $score = 75;
                 }
                 $this->analysis['risk_of_bribery'] = "Criminal record present but mitigated by ethical integrity and online reputation.";
-                return 65;
+                $score = 65;
             }
         } else { // No Criminal Record → Go to next major risk factor
             if ($data['regulatory_violations']) {
                 if ($data['ethical_integrity'] < 60) {
                     $this->analysis['risk_of_bribery'] = "Regulatory violations combined with low ethical integrity contribute to a high risk.";
-                    return 70;
+                    $score = 70;
                 } else {
                     if ($data['loyalty'] < 40) {
                         $this->analysis['risk_of_bribery'] = "Regulatory violations present, ethical integrity is acceptable, but low loyalty raises concerns.";
-                        return 60;
+                        $score = 60;
                     }
                     $this->analysis['risk_of_bribery'] = "Regulatory violations present, but ethical integrity and loyalty are acceptable.";
-                    return 50;
+                    $score = 50;
                 }
             } else { // No Criminal + No Regulatory Violations → Evaluate Job History
                 if ($data['job_tenure'] < 30) {
                     if ($data['online_professional_reputation'] < 40) {
                         $this->analysis['risk_of_bribery'] = "Short job tenure combined with a poor online reputation suggests potential risk.";
-                        return 55;
+                        $score = 55;
                     }
                     if ($data['professional_references'] < 40) {
                         $this->analysis['risk_of_bribery'] = "Short job tenure and weak professional references increase risk.";
-                        return 50;
+                        $score = 50;
                     }
                     $this->analysis['risk_of_bribery'] = "Short job tenure, but online reputation and references are acceptable.";
-                    return 45;
+                    $score = 45;
                 } else { // Job Tenure is good → Evaluate Loyalty & Ethics
                     if ($data['loyalty'] < 50) {
                         if ($data['ethical_integrity'] < 60) {
                             $this->analysis['risk_of_bribery'] = "Low loyalty and moderate ethical integrity indicate some risk.";
-                            return 40;
+                            $score = 40;
                         }
                         $this->analysis['risk_of_bribery'] = "Loyalty is low, but ethical integrity is acceptable.";
-                        return 30;
+                        $score = 30;
                     } else { // Loyalty is Good → Evaluate Online Reputation
                         if ($data['online_professional_reputation'] < 50) {
                             $this->analysis['risk_of_bribery'] = "Good loyalty but weak online reputation slightly increases risk.";
-                            return 25;
+                            $score = 25;
                         }
                         $this->analysis['risk_of_bribery'] = "Strong loyalty, good ethical integrity, and a solid professional reputation result in low risk.";
-                        return 10;
+                        $score = 10;
                     }
                 }
             }
         }
+        return $score;
     }
 
     private function calculateEmployeeEfficiency($data) {
@@ -326,4 +337,73 @@ class RiskCalculationController extends Controller
             }
         }
     }
+
+    public function adjustMetrics($data, $metrics)
+    {
+        $client = OpenAI::client(env('OPENAI_API_KEY')); // Ensure your API key is set in the .env file
+
+// Prepare the message with dynamic data
+$messages = [
+    [
+        'role' => 'system',
+        'content' => "You are an assistant that provides logical analysis in JSON format. You should give 5 numeric values only for the factors you are asked about!"
+    ],
+    [
+        'role' => 'user',
+        'content' => "You are an HR professional analyst. Here is data for this employee (1 to 100 where 50 is neutral, 100 is positive, and 0 is negative): 
+        loyalty = {$data['loyalty']}; 
+        ethical_integrity = {$data['ethical_integrity']}; 
+        job_tenure = {$data['job_tenure']}; 
+        professional_references = {$data['professional_references']}; 
+        online_professional_reputation = {$data['online_professional_reputation']}; 
+        criminal_record = {$data['criminal_record']}; 
+        regulatory_violations = {$data['regulatory_violations']}; 
+        work_experience_level = {$data['work_experience_level']}; 
+        certifications_achieved = {$data['certifications_achieved']}; 
+        education_level = {$data['education_level']}; 
+        career_progression = {$data['career_progression']}; 
+        leadership_experience = {$data['leadership_experience']}; 
+        career_stability = {$data['career_stability']}; 
+        salary_history = {$data['salary_history']}; 
+        employment_gaps = {$data['employment_gaps']}; 
+        linkedin_recommendations = {$data['linkedin_recommendations']}. 
+        Based on these characteristics, my system calculated the following risk metrics: 
+        risk_of_bribery = {$metrics['risk_of_bribery']}; 
+        employee_efficiency = {$metrics['employee_efficiency']}; 
+        risk_of_employee_turnover = {$metrics['risk_of_employee_turnover']}; 
+        employee_reputation = {$metrics['employee_reputation']}; 
+        career_growth_potential = {$metrics['career_growth_potential']}. 
+        Please adjust these values realistically, ensuring changes are within 5% in the appropriate direction."
+    ]
+];
+
+try {
+    // Create the request to OpenAI API
+    $response = $client->chat()->create([
+        'model' => 'gpt-4',
+        'messages' => $messages,
+        'temperature' => 0.2,
+        'max_tokens' => 150,
+    ]);
+
+    // Check if the response contains the 'choices' key
+    if (isset($response['choices'][0]['message']['content'])) {
+        $adjustedValues = $response['choices'][0]['message']['content'];
+        $adjustedMetrics = json_decode($adjustedValues, true);
+    } else {
+        Log::error('OpenAI API response did not contain expected data.');
+        $adjustedMetrics = [];
+    }
+} catch (\Exception $e) {
+    Log::error('OpenAI API request failed: ' . $e->getMessage());
+    $adjustedMetrics = [];
+}
+
+// Return adjusted metrics
+
+
+// Return adjusted metrics
+return $adjustedMetrics;
+    
+  }
 }
