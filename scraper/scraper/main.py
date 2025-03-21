@@ -154,7 +154,8 @@ def scrape_company_info(company_name: str) -> dict:
             wait.until(EC.presence_of_element_located((By.TAG_NAME, "body")))
 
             # Try to get text from each element type
-            selectors = ['h1', 'h2', 'h3', 'p', '.company-info', '.details']
+            selectors = ['h1', 'h2', 'h3', 'p', '.company-info', '.details', 'table table-bordered table-sm mt-4', 'tr',
+                         'th', 'td']
             for selector in selectors:
                 try:
                     elements = driver.find_elements(By.CSS_SELECTOR, selector)
@@ -191,6 +192,96 @@ def scrape_company_info(company_name: str) -> dict:
         }
 
 
+def analyze_with_gpt(cv_summary: dict, company_details: list) -> dict:
+    # Define scoring template at function start
+    scoring_template = {
+        "loyalty": 50,
+        "ethical_integrity": 50,
+        "job_tenure": 50,
+        "professional_references": 50,
+        "online_professional_reputation": 50,
+        "criminal_record": 0,
+        "regulatory_violations": 0,
+        "work_experience_level": 50,
+        "certifications_achieved": 50,
+        "education_level": 50,
+        "career_progression": 50,
+        "leadership_experience": 50,
+        "career_stability": 50,
+        "salary_history": 50,
+        "employment_gaps": 0,
+        "linkedin_recommendations": 50
+    }
+
+    try:
+        api_key = read_api_key()
+        openai.api_key = api_key
+        prompt = f"""Analyze this CV and company data to generate a candidate scoring. 
+
+Key Analysis Points:
+1. Company Financial Health:
+- Companies reporting only turnover without profit indicate potential tax evasion (lower ethical_integrity)
+- Negative profit margins suggest financial issues
+- Rapid turnover changes indicate instability
+
+2. Employment Pattern:
+- 3 companies in 3 years indicates low job stability (lower loyalty and career_stability)
+- Short tenures impact job_tenure score negatively
+- Frequent job changes might indicate career progression or instability
+
+3. Scoring Guidelines:
+- loyalty: Below 40 for frequent job changes
+- ethical_integrity: Below 30 if working with companies showing tax irregularities
+- job_tenure: Consider average time per company
+- career_stability: Factor in job change frequency
+- work_experience_level: Based on total years and positions
+- leadership_experience: Based on team size and role progression
+
+CV Summary:
+{json.dumps(cv_summary, ensure_ascii=False, indent=2)}
+
+Company Details:
+{json.dumps(company_details, ensure_ascii=False, indent=2)}
+
+Rules:
+- Score all metrics between 0-100
+- NO DEFAULT VALUES OF 50
+- Lower ethical_integrity for companies without reported profits
+- Lower stability scores for frequent job changes
+- Consider financial trends and employee counts
+- Factor in work experience timeline
+
+Return this exact JSON structure with appropriate values:
+{json.dumps(scoring_template, indent=2)}"""
+
+        print("Sending request to GPT...")
+        print(f"Prompt: {prompt}")
+        response = openai.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.7
+        )
+
+        response_text = response.choices[0].message.content.strip()
+
+        try:
+            scoring = json.loads(response_text)
+            # Validate and fill missing fields
+            for key in scoring_template:
+                if key not in scoring:
+                    scoring[key] = scoring_template[key]
+            return scoring
+
+        except json.JSONDecodeError as e:
+            print(f"JSON parsing error: {e}")
+            print(f"Raw response: {response_text}")
+            return scoring_template
+
+    except Exception as e:
+        print(f"Error in GPT analysis: {str(e)}")
+        return scoring_template
+
+
 @app.post("/upload-user-data/")
 async def upload_user_data(
         full_name: str = Form(...),
@@ -223,13 +314,37 @@ async def upload_user_data(
             company_info = scrape_company_info(company)
             company_details.append(company_info)
 
+        try:
+            candidate_scoring = analyze_with_gpt(summary, company_details)
+        except Exception as e:
+            print(f"Error in GPT analysis: {str(e)}")
+            candidate_scoring = {
+                "loyalty": 50,
+                "ethical_integrity": 50,
+                "job_tenure": 50,
+                "professional_references": 50,
+                "online_professional_reputation": 50,
+                "criminal_record": 0,
+                "regulatory_violations": 0,
+                "work_experience_level": 50,
+                "certifications_achieved": 50,
+                "education_level": 50,
+                "career_progression": 50,
+                "leadership_experience": 50,
+                "career_stability": 50,
+                "salary_history": 50,
+                "employment_gaps": 0,
+                "linkedin_recommendations": 50
+            }
+
         return {
             "full_name": full_name,
             "birthdate": birthdate,
             "cv_content": pdf_text,
             "cv_summary": summary,
             "companies": companies,
-            "company_details": company_details
+            "company_details": company_details,
+            "candidate_scoring": candidate_scoring
         }
 
     except Exception as e:
