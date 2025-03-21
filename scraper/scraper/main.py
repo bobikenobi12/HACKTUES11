@@ -93,27 +93,27 @@ def extract_companies(cv_summary: dict) -> list:
 def scrape_company_info(company_name: str) -> dict:
     try:
         options = uc.ChromeOptions()
-        options.add_argument('--headless')
-        # options.add_argument('--start-maximized')
-        options.add_argument('--disable-gpu')
+        options.add_argument('--headless=new')
         options.add_argument('--no-sandbox')
         options.add_argument('--disable-dev-shm-usage')
-        options.add_argument('--disable-blink-features=AutomationControlled')
-        options.add_argument('--disable-extensions')
-        options.add_argument(
-            f'user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36')
+        options.add_argument('--disable-gpu')
+        options.add_argument('--disable-software-rasterizer')
+        options.add_argument('--window-size=1920,1080')
+        
+        if os.getenv('CHROME_BIN'):
+            print(f"Using Chrome binary: {os.getenv('CHROME_BIN')}")
+            options.binary_location = os.getenv('CHROME_BIN')
 
-        driver = uc.Chrome(options=options)
-        driver.set_page_load_timeout(30)  # Increased timeout
-
-        # if os.getenv('CHROME_BIN'):
-        #     options.binary_location = os.getenv('CHROME_BIN')
-
-        # driver = uc.Chrome(
-        #     driver_executable_path=os.getenv('CHROME_DRIVER'),
-        #     options=options,
-        #     version_main=122  # Match installed Chrome version
-        # )
+        chrome_driver_path = os.getenv('CHROME_DRIVER', '/usr/bin/chromedriver')
+        print(f"Using ChromeDriver: {chrome_driver_path}")
+        
+        driver = uc.Chrome(
+            driver_executable_path=chrome_driver_path,
+            options=options
+        )
+        
+        driver.set_page_load_timeout(30)
+        print(f"Starting scrape for: {company_name}")
 
         try:
             # Navigate and wait longer for Cloudflare
@@ -228,26 +228,8 @@ def analyze_with_gpt(cv_summary: dict, company_details: list) -> dict:
     try:
         api_key = read_api_key()
         openai.api_key = api_key
-        prompt = f"""Analyze this CV and company data to generate a candidate scoring. 
-
-Key Analysis Points:
-1. Company Financial Health:
-- Companies reporting only turnover without profit indicate potential tax evasion (lower ethical_integrity)
-- Negative profit margins suggest financial issues
-- Rapid turnover changes indicate instability
-
-2. Employment Pattern:
-- 3 companies in 3 years indicates low job stability (lower loyalty and career_stability)
-- Short tenures impact job_tenure score negatively
-- Frequent job changes might indicate career progression or instability
-
-3. Scoring Guidelines:
-- loyalty: Below 40 for frequent job changes
-- ethical_integrity: Below 30 if working with companies showing tax irregularities
-- job_tenure: Consider average time per company
-- career_stability: Factor in job change frequency
-- work_experience_level: Based on total years and positions
-- leadership_experience: Based on team size and role progression
+        prompt = f"""Analyze this CV and company data to generate a candidate scoring based on the following metrics:
+        {json.dumps(scoring_template, indent=2)}
 
 CV Summary:
 {json.dumps(cv_summary, ensure_ascii=False, indent=2)}
@@ -262,6 +244,11 @@ Rules:
 - Lower stability scores for frequent job changes
 - Consider financial trends and employee counts
 - Factor in work experience timeline
+- Consider the quality and relevance of professional references
+- Consider the level and relevance of certifications and education
+- Consider the impact and achievements in work experience
+- Consider the overall quality and relevance of the CV content
+- Provide higher scores for exceptional achievements and recognitions
 
 Return this exact JSON structure with appropriate values:
 {json.dumps(scoring_template, indent=2)}"""
@@ -360,17 +347,15 @@ async def upload_user_data(
             "candidate_scoring": candidate_scoring
         }
 
-        print(response_json)
+        print (response_json)
         return response_json
 
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Error processing PDF: {str(e)}")
 
-
 @app.get("/home")
 def home():
     return {"message": "Welcome to the CV Analyzer API!"}
-
 
 # Run the application
 if __name__ == "__main__":
