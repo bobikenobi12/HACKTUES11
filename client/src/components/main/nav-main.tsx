@@ -9,19 +9,8 @@ import {
 	SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { useMessages } from "@/hooks/useMessages";
+import { useDialogStore } from "@/stores/dialog-store";
 import { Link as RouterLink } from "@tanstack/react-router";
-import { NewEmployeeForm } from "../forms/new-employee";
-import {
-	Credenza,
-	CredenzaBody,
-	CredenzaClose,
-	CredenzaContent,
-	CredenzaDescription,
-	CredenzaFooter,
-	CredenzaHeader,
-	CredenzaTitle,
-	CredenzaTrigger,
-} from "../ui/credenza";
 
 export function NavMain({
 	items,
@@ -34,43 +23,23 @@ export function NavMain({
 }) {
 	const { t } = useMessages("nav");
 
+	const setGatherAnalyticsDialog = useDialogStore(
+		(state) => state.setGatherAnalyticsDialog
+	);
+
 	return (
 		<SidebarGroup>
 			<SidebarGroupContent className="flex flex-col gap-2">
 				<SidebarMenu>
 					<SidebarMenuItem className="flex items-center gap-2">
-						<Credenza>
-							<CredenzaTrigger asChild>
-								<SidebarMenuButton
-									tooltip={t("navAction")}
-									className="min-w-8 bg-primary text-primary-foreground duration-200 ease-linear hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground"
-								>
-									<PlusCircleIcon />
-									<span>{t("navAction")}</span>
-								</SidebarMenuButton>
-							</CredenzaTrigger>
-							<CredenzaContent>
-								<CredenzaHeader>
-									<CredenzaTitle>
-										New Potential Employee{" "}
-									</CredenzaTitle>
-									<CredenzaDescription>
-										Add a new potential employee to the
-										system.
-									</CredenzaDescription>
-								</CredenzaHeader>
-								<CredenzaBody>
-									<NewEmployeeForm />
-								</CredenzaBody>
-								<CredenzaFooter>
-									<CredenzaClose asChild>
-										<Button>
-											<span>{t("close")}</span>
-										</Button>
-									</CredenzaClose>
-								</CredenzaFooter>
-							</CredenzaContent>
-						</Credenza>
+						<SidebarMenuButton
+							tooltip={t("navAction")}
+							className="min-w-8 bg-primary text-primary-foreground duration-200 ease-linear hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground"
+							onClick={() => setGatherAnalyticsDialog(true)}
+						>
+							<PlusCircleIcon />
+							<span>{t("navAction")}</span>
+						</SidebarMenuButton>
 
 						<Button
 							size="icon"

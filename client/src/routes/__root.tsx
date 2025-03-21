@@ -1,3 +1,4 @@
+import { GatherAnalyticsDialog } from "@/components/dialogs/gather-analytics";
 import { ProfileDialog } from "@/components/dialogs/profile-dialog";
 import { AppLoader } from "@/components/layout/app-loader";
 import CookieConsent from "@/components/ui/cookies";
@@ -13,7 +14,7 @@ export const Route = createRootRoute({
 			<div vaul-drawer-wrapper="" className="bg-background">
 				<Outlet />
 			</div>
-
+			<GatherAnalyticsDialog />
 			<ProfileDialog />
 			<Toaster />
 			{/* <AuthSubscriber /> */}
