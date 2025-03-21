@@ -54,45 +54,45 @@ export const useAuth = (navigateTo?: string) => {
 	// const setProfile = useAuthStore((state) => state.setProfile);
 
 	// Sign Up / Register
-	const signUp = useMutation({
-		mutationFn: async (values: SignUpFormValues) => {
-			const response = await fetch(
-				`${import.meta.env.VITE_API_URL}/auth/signup`,
-				{
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({
-						// username: values.username,
-						email: values.email,
-						password: values.password,
-						name: values.name,
-						// phoneNumber: values.phone,
-						// countryCode: values.phoneCountryCode,
-						local: i18n.language,
-					}),
-				}
-			);
+	// const signUp = useMutation({
+	// 	mutationFn: async (values: SignUpFormValues) => {
+	// 		const response = await fetch(
+	// 			`${import.meta.env.VITE_API_URL}/auth/signup`,
+	// 			{
+	// 				method: "POST",
+	// 				headers: {
+	// 					"Content-Type": "application/json",
+	// 				},
+	// 				body: JSON.stringify({
+	// 					// username: values.username,
+	// 					email: values.email,
+	// 					password: values.password,
+	// 					name: values.name,
+	// 					// phoneNumber: values.phone,
+	// 					// countryCode: values.phoneCountryCode,
+	// 					local: i18n.language,
+	// 				}),
+	// 			}
+	// 		);
 
-			const data = await response.json();
+	// 		const data = await response.json();
 
-			if (!response.ok) {
-				toast.error(t("errors.unknown"), {
-					description: data.message || "Something went wrong",
-				});
-				throw new Error(data.message);
-			}
+	// 		if (!response.ok) {
+	// 			toast.error(t("errors.unknown"), {
+	// 				description: data.message || "Something went wrong",
+	// 			});
+	// 			throw new Error(data.message);
+	// 		}
 
-			if (navigateTo)
-				navigate({
-					to: navigateTo,
-					// to: "/check-your-email",
-				});
+	// 		if (navigateTo)
+	// 			navigate({
+	// 				to: navigateTo,
+	// 				// to: "/check-your-email",
+	// 			});
 
-			return data;
-		},
-	});
+	// 		return data;
+	// 	},
+	// });
 
 	// // Login
 	const login = useMutation({

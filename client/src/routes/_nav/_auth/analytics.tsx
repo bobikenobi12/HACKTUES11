@@ -120,7 +120,7 @@ function AnalyticsPage() {
 			<div className="flex flex-col gap-3">
 				{/* <CircularProgress metric={t("metrics.riskOfBribery")} c */}
 
-				<SectionCards {...data} />
+				<SectionCards />
 			</div>
 			<AnalysisBarChart
 				chartData={[

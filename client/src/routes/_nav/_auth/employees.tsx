@@ -30,11 +30,7 @@ import {
 	useReactTable,
 } from "@tanstack/react-table";
 
-import {
-	useCompanyStore,
-	type AddEmployee,
-	type Employee,
-} from "@/stores/company-store";
+import { useCompanyStore, type Employee } from "@/stores/company-store";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 
@@ -250,9 +246,9 @@ export function DataTable<TData, TValue>({
 
 function EmployeesPage() {
 	const selectedCompany = useCompanyStore((state) => state.selectedCompany);
-	const addEmployeeToCompany = useCompanyStore(
-		(state) => state.addEmployeeToCompany
-	);
+	// const addEmployeeToCompany = useCompanyStore(
+	// 	(state) => state.addEmployeeToCompany
+	// );
 
 	const [filters, setFilters] = useState({
 		name: "",
@@ -260,36 +256,36 @@ function EmployeesPage() {
 		maxEfficiency: 100,
 	});
 
-	const addEmployee = useMutation({
-		mutationFn: async (employee: AddEmployee) => {
-			if (!selectedCompany) {
-				throw new Error("No company selected");
-			}
-			const res = await fetch(
-				`${import.meta.env.VITE_SERVER_URL}/company/${selectedCompany.id}/employee`,
-				{
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-						Authorization: `Bearer ${
-							JSON.parse(
-								localStorage.getItem("client-session") || "{}"
-							).token
-						}`,
-					},
-					body: JSON.stringify(employee),
-				}
-			);
-			if (!res.ok) {
-				throw new Error("Failed to add employee");
-			}
+	// const addEmployee = useMutation({
+	// 	mutationFn: async (employee: AddEmployee) => {
+	// 		if (!selectedCompany) {
+	// 			throw new Error("No company selected");
+	// 		}
+	// 		const res = await fetch(
+	// 			`${import.meta.env.VITE_SERVER_URL}/company/${selectedCompany.id}/employee`,
+	// 			{
+	// 				method: "POST",
+	// 				headers: {
+	// 					"Content-Type": "application/json",
+	// 					Authorization: `Bearer ${
+	// 						JSON.parse(
+	// 							localStorage.getItem("client-session") || "{}"
+	// 						).token
+	// 					}`,
+	// 				},
+	// 				body: JSON.stringify(employee),
+	// 			}
+	// 		);
+	// 		if (!res.ok) {
+	// 			throw new Error("Failed to add employee");
+	// 		}
 
-			const data: Employee = await res.json();
+	// 		const data: Employee = await res.json();
 
-			addEmployeeToCompany(data);
-			return res.json();
-		},
-	});
+	// 		addEmployeeToCompany(data);
+	// 		return res.json();
+	// 	},
+	// });
 
 	// const filteredEmployees =
 	// 	selectedCompany &&
