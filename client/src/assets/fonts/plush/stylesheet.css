@@ -1,0 +1,27 @@
+@font-face {
+  font-family: "Plush";
+  font-style: normal;
+  font-weight: normal;
+  src: url("Plush-Regular.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Plush";
+  font-style: italic;
+  font-weight: normal;
+  src: url("Plush-Italic.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Plush";
+  font-style: normal;
+  font-weight: bold;
+  src: url("Plush-Bold.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Plush";
+  font-style: italic;
+  font-weight: bold;
+  src: url("Plush-BoldItalic.otf") format("opentype");
+}

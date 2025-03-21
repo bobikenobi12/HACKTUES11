@@ -1,0 +1,38 @@
+{
+	"navAction": "Анализарай CV",
+	"navActionTooltip": "Първо трябва да изберете фирма!",
+	"logout": "Изход",
+	"profile": "Профил",
+	"close": "Затвори",
+	"gatherAnalytics": {
+		"dialogTitle": "Нов Потенциален Служител",
+		"dialogContent": "Добавяне на нови потенциални служители в системата"
+	},
+	"header": {
+		"links": {
+			"dashboard": "Табло",
+			"employees": "Служители",
+			"companies": "Компании",
+			"settings": "Настройки",
+			"analytics": "Анализи",
+			"getHelp": "Потърси помощ",
+			"search": "Търсене"
+		}
+	},
+	"employeeActions": {
+		"copyName": "Копирай името на служителя",
+		"remove": "Премахни служителя",
+		"view": "Преглед на служителя"
+	},
+	"companies": {
+		"emptyCombobox": "Няма налични фирми",
+		"select": "Избери фирма",
+		"search": "Потърси фирма",
+		"create": "Създай нова фирма '{{companyName}}'"
+	},
+	"removeEmployee": {
+		"uknownCompany": "Не може да премахнете служител от несъществуваща фирма!",
+		"success": "Успешно премахнате {{employeeName}} от {{companyName}}!",
+		"error": "Грешка при премахване на {{employeeName}} от {{companyName}}."
+	}
+}

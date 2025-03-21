@@ -1,0 +1,38 @@
+{
+	"navAction": "Analyze CV",
+	"navActionTooltip": "You need to select a company first!",
+	"logout": "Logout",
+	"profile": "Profile",
+	"close": "Close",
+	"gatherAnalytics": {
+		"dialogTitle": "New Potential Employees",
+		"dialogContent": "Add a new potential employee to the system."
+	},
+	"header": {
+		"links": {
+			"dashboard": "Dashboard",
+			"employees": "Employees",
+			"companies": "Companies",
+			"settings": "Settings",
+			"analytics": "Analytics",
+			"getHelp": "Get Help",
+			"search": "Search"
+		}
+	},
+	"employeeActions": {
+		"copyName": "Copy employee name",
+		"remove": "Remove employee",
+		"view": "View employee"
+	},
+	"companies": {
+		"emptyCombobox": "No companies available.",
+		"select": "Select company",
+		"search": "Search company",
+		"create": "Create new company '{{companyName}}'"
+	},
+	"removeEmployee": {
+		"uknownCompany": "Cannot remove an employee from an unknown company!",
+		"success": "Successfully removed {{employeeName}} from {{companyName}}!",
+		"error": "Error removing {{employeeName}} from {{companyName}}."
+	}
+}
